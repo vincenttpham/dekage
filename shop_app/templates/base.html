@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Dekage</title>
+  {% load static %}
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'css/messages.css' %}" rel="stylesheet">
+  <style type="text/css">
+    html,
+    body,
+    header,
+    .carousel {
+      height: 60vh;
+    }
+
+    @media (max-width: 740px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark blue lighten-3 scrolling-navbar">
+    <div class="container">
+
+      <!-- Brand -->
+      <a class="navbar-brand waves-effect" href="/">
+        <img src="{% static 'img/logo/dekagePNG-02.png/' %}" style="height: 50px; position: absolute; top: -5px;">
+        <strong class="ml-5 text-white">대가게</strong>
+      </a>
+
+      <!-- Collapse -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <!--
+          {% if request.session.page == 'home' %}
+          <li class="nav-item active">
+            <a class="nav-link waves-effect" href="/">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="/">Home</a>
+          </li>
+          {% endif %}
+          {% if request.session.page == 'contact' %}
+          <li class="nav-item active">
+            <a class="nav-link waves-effect" href="/contact/">Contact
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="/contact/">Contact</a>
+          </li>
+          {% endif %}
+          -->
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons">
+          <li class="nav-item">
+            <a href="/cart/" class="nav-link waves-effect">
+              {% if 'user_id' in request.session or 'cart_id' in request.session %}
+              {% if cart.quantity > 0 %}
+              <span class="badge red z-depth-1 mr-1"> {{ cart.quantity }} </span>
+              {% endif %}
+              {% endif %}
+              <i class="fas fa-shopping-cart"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  <!-- Navbar -->
+
+  {% load tz %}
+  {% timezone 'US/Pacific' %}
+
+  {% if messages %}
+  {% for message in messages %}
+  {% if 'info' in message.tags %}
+  <div class="fixed-top mt-5">
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-4" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+
+  {% if 'carousel' in request.session %}
+  {% include "carousel.html" %}
+  {% endif %}
+
+  {% block content %}
+  {% endblock %}
+
+  {% endtimezone %}
+
+  <!--Footer-->
+  <footer class="page-footer text-center font-small mt-auto wow fadeIn blue lighten-3">
+
+    <div class="container">
+      <div class="row align-items-center d-flex justify-content-between">
+        <div class="col-4 col-md-3 d-flex justify-content-start pt-3">
+          <a href="/contact/"><u>Contact</u></a>
+          <span class="mx-2">|</span>
+          <a href="https://www.facebook.com" target="_blank">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+        </div>
+        <div class="col-4 col-md-3 pt-3">
+          <img src="{% static 'img/logo/dekagePNG-02.png/' %}" style="height: 80px;">
+        </div>
+        <div class="col-4 col-md-3 d-flex justify-content-end pt-3">
+          <div>
+            <span class="d-block">Dekage</span>
+            <span class="d-block">대가게</span>
+            <span class="d-block">で影</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Social icons -->
+    <div class="container">
+      <div class="row align-items-center d-flex justify-content-between">
+        <div class="col-4 col-md-3 d-flex justify-content-start pb-3">
+          <img src="{% static 'img/paypal/Badge_1.png/' %}" style="height: 60px;">
+        </div>
+        <div class="col-4 col-md-3 pb-3">
+          <!-- PayPal Logo -->
+          <table border="0" cellpadding="0" cellspacing="0" align="center">
+            <tr>
+              <td align="center">
+              </td>
+            </tr>
+            <tr>
+              <td align="center">
+                <a href="https://www.paypal.com/c2/webapps/mpp/paypal-popup?locale.x=en_C2" title="PayPal Acceptance Mark" onclick="javascript:window.open('https://www.paypal.com/c2/webapps/mpp/paypal-popup?locale.x=en_C2','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;">
+                  <img src="https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/C2/logos-buttons/optimize/Full_Online_Tray_RGB.png" border="0" alt="PayPal Acceptance Mark" class="img-fluid">
+                </a>
+              </td>
+            </tr>
+          </table>
+          <!-- PayPal Logo -->
+        </div>
+        <div class="col-4 col-md-3 d-flex justify-content-end">
+        </div>
+      </div>
+    </div>
+    <!-- Social icons -->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+      © 2021 Dekage
+    </div>
+    <!--/.Copyright-->
+
+  </footer>
+  <!--/.Footer-->
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+  <!-- Initializations -->
+  <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+
+  </script>
+
+  <!-- Maintain scroll position -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) { 
+      var scrollpos = sessionStorage.getItem('scrollpos');
+      if (scrollpos) {
+        window.scrollTo(0, scrollpos);
+        sessionStorage.removeItem('scrollpos');
+      }
+    });
+    function pagePosition() {
+      sessionStorage.setItem('scrollpos', window.scrollY);
+      location.reload(); 
+    }
+  </script>
+
+  <!--
+  <script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        var scrollpos = sessionStorage.getItem('scrollpos');
+        if (scrollpos) {
+            window.scrollTo(0, scrollpos);
+            sessionStorage.removeItem('scrollpos');
+        }
+    });
+
+    window.addEventListener("beforeunload", function (e) {
+        sessionStorage.setItem('scrollpos', window.scrollY);
+    });
+  </script>
+  -->
+
+  <script type="text/javascript">
+    // Messaging chat window scroll bottom
+    $(document).ready(function () {
+      $(".msg_history").scrollTop($(".msg_history")[0].scrollHeight);
+    });
+
+  </script>
+
+  <script>
+    var $stars;
+
+    jQuery(document).ready(function ($) {
+
+      // Custom whitelist to allow for using HTML tags in popover content
+      var myDefaultWhiteList = $.fn.tooltip.Constructor.Default.whiteList
+      myDefaultWhiteList.textarea = [];
+      myDefaultWhiteList.button = [];
+
+      $stars = $('.rate-popover');
+
+      $stars.on('mouseover', function () {
+        var index = $(this).attr('data-index');
+        markStarsAsActive(index);
+      });
+
+      function markStarsAsActive(index) {
+        unmarkActive();
+
+        for (var i = 0; i <= index; i++) {
+          $($stars.get(i)).addClass('fas');
+          switch (index) {
+            case '0':
+              $($stars.get(i)).addClass('oneStar');
+              break;
+            case '1':
+              $($stars.get(i)).addClass('twoStars');
+              break;
+            case '2':
+              $($stars.get(i)).addClass('threeStars');
+              break;
+            case '3':
+              $($stars.get(i)).addClass('fourStars');
+              break;
+            case '4':
+              $($stars.get(i)).addClass('fiveStars');
+              break;
+          }
+        }
+      }
+
+      function unmarkActive() {
+        $stars.removeClass('oneStar twoStars threeStars fourStars fiveStars fas');
+      }
+
+      $stars.on('click', function () {
+        $stars.popover('hide');
+      });
+
+      // Submit, you can add some extra custom code here
+      // ex. to send the information to the server
+      $('#rateMe').on('click', '#voteSubmitButton', function () {
+        $stars.popover('hide');
+      });
+
+      // Cancel, just close the popover
+      $('#rateMe').on('click', '#closePopoverButton', function () {
+        $stars.popover('hide');
+      });
+
+    });
+
+    $(function () {
+      $('.rate-popover').popover({
+        // Append popover to #rateMe to allow handling form inside the popover
+        container: '#rateMe',
+        // Custom content for popover
+        content: `<div class="my-0 py-0"></div>`
+      });
+      $('.rate-popover').tooltip();
+    });
+
+  </script>
+
+  <!--
+    $('.rate-popover').popover({
+        // Append popover to #rateMe to allow handling form inside the popover
+        container: '#rateMe',
+        // Custom content for popover
+        content: `<div class="my-0 py-0"> <textarea type="text" style="font-size: 0.78rem" class="md-textarea form-control py-0" placeholder="Write us what can we improve" rows="3"></textarea> <button id="voteSubmitButton" type="submit" class="btn btn-sm btn-primary">Submit!</button> <button id="closePopoverButton" class="btn btn-flat btn-sm">Close</button>  </div>`
+      });
+  -->
+
+  <!-- Include the PayPal JavaScript SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id={{ client_id }}&currency=USD"></script>
+
+  <script>
+      // CSRFTOKEN
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+      const cart_id = document.getElementById('cart-id').value
+
+      // Render the PayPal button into #paypal-button-container
+      paypal.Buttons({
+
+          // Call your server to set up the transaction
+          createOrder: function(data, actions) {
+              return fetch('/checkout/order/'+cart_id+'/', {
+                  method: 'post',
+                  headers: {"X-CSRFToken": csrftoken}
+              }).then(function(res) {
+                  return res.json();
+              }).then(function(orderData) {
+                  console.log(orderData)
+                  return orderData.id;
+              });
+          },
+
+          // Call your server to finalize the transaction
+          onApprove: function(data, actions) {
+              return fetch('/checkout/order/' + data.orderID + '/capture/'+cart_id+'/', {
+                  method: 'post',
+                  headers: {"X-CSRFToken": csrftoken}
+              }).then(function(res) {
+                  return res.json();
+              }).then(function(orderData) {
+                  // Three cases to handle:
+                  //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                  //   (2) Other non-recoverable errors -> Show a failure message
+                  //   (3) Successful transaction -> Show confirmation or thank you
+
+                  // This example reads a v2/checkout/orders capture response, propagated from the server
+                  // You could use a different API or structure for your 'orderData'
+                  var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+
+                  if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                      return actions.restart(); // Recoverable state, per:
+                      // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                  }
+
+                  if (errorDetail) {
+                      var msg = 'Sorry, your transaction could not be processed.';
+                      if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                      if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                      return alert(msg); // Show a failure message
+                  }
+
+                  // Show a success message
+                  alert('Transaction completed by ' + orderData.payer.name.given_name);
+                  window.location.replace('/checkout/order/placed/');
+              });
+          }
+
+      }).render('#paypal-button-container');
+  </script>
+</body>
+
+</html>

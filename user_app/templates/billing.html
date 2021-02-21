@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="app-main">
+  <!-- .wrapper -->
+  <div class="wrapper mt-5 pt-4">
+    <!-- .page -->
+    <div class="page">
+      <!-- .page-navs -->
+      <nav class="page-navs">
+        <div class="container">
+          <!-- .nav-scroller -->
+          <div class="nav-scroller">
+            <!-- .nav -->
+            <div class="nav nav-center nav-tabs border-0">
+              <a class="nav-link" href="/user/">Current orders</a>
+              <a class="nav-link" href="/user/history/">Order history</a>
+              <a class="nav-link" href="/user/messages/">Messages
+                {% if unread_messages %}
+                <span class="badge badge-pill info-color">{{ unread_messages.count }}</span>
+                {% endif %}
+              </a>
+              <a class="nav-link active" href="/user/settings/account/">Settings</a>
+            </div>
+            <!-- /.nav -->
+          </div>
+          <!-- /.nav-scroller -->
+        </div>
+      </nav>
+      <!-- /.page-navs -->
+      <!-- .page-inner -->
+      <div class="page-inner">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <div class="container">
+              <li class="breadcrumb-item active">
+                <a href="/">
+                  <i class="breadcrumb-icon fa fa-angle-left mr-2"></i>
+                  {{ user.first_name }} {{ user.last_name }}
+                </a>
+              </li>
+            </div>
+          </ol>
+        </nav>
+        <!-- .container -->
+        <div class="container">
+          <!-- .page-section -->
+          <div class="page-section">
+            <!-- grid row -->
+            <div class="row">
+              <!-- grid column -->
+              <div class="col-lg-4">
+                <!-- .card -->
+                <div class="card card-fluid">
+                  <h6 class="card-header"> Your Details </h6>
+                  <!-- .nav -->
+                  <nav class="nav nav-tabs flex-column">
+                    <a href="/user/settings/account/" class="nav-link">Account</a>
+                    <a href="/user/settings/billing/" class="nav-link active">Billing</a>
+                    <a href="/user/settings/notifications/" class="nav-link">Notifications</a>
+                  </nav>
+                  <!-- /.nav -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /grid column -->
+              <!-- grid column -->
+              <div class="col-lg-8">
+                <!-- .card -->
+                <div class="card card-fluid">
+                  <h6 class="card-header"> Billing Information </h6>
+                  <!-- .card-body -->
+                  <div class="card-body">
+                    {% if messages %}
+                    <ul class="messages text-danger">
+                      {% for message in messages %}
+                      {% if 'error' in message.tags %}
+                      <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                      {% endif %}
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <!-- form -->
+                    <form action="/user/settings/billing/update/" method="POST">
+                      {% csrf_token %}
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input03" class="col-md-3 mb-3">Country</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <select id="input03" class="custom-select" name="country">
+                            {% if user.country %}
+                            <option value="{{ user.country }}">{{ user.country }}</option>
+                            <option value="">Choose...</option>
+                            {% else %}
+                            <option value="">Choose...</option>
+                            <option value="United States">United States</option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input04" class="col-md-3 mb-3">Address Line 1</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <input type="text" class="form-control" id="input04" required="" name="address1"
+                            value="{{ user.address1 }}">
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input05" class="col-md-3 mb-3">Address Line 2</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <input type="text" class="form-control" id="input05" name="address2"
+                            value="{{ user.address2 }}">
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input06" class="col-md-3 mb-3">City</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <input type="text" class="form-control" id="input06" name="city" value="{{ user.city }}"
+                            required="">
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input07" class="col-md-3 mb-3">State</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <input type="text" class="form-control" id="input07" name="state" value="{{ user.state }}"
+                            required="">
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <!-- form row -->
+                      <div class="form-row">
+                        <!-- form column -->
+                        <label for="input08" class="col-md-3 mb-3">Zip / Postal Code</label>
+                        <!-- /form column -->
+                        <!-- form column -->
+                        <div class="col-md-9 mb-3">
+                          <input type="text" class="form-control" id="input08" name="zipcode" value="{{ user.zipcode }}"
+                            required="">
+                        </div>
+                        <!-- /form column -->
+                      </div>
+                      <!-- /form row -->
+                      <hr>
+                      <!-- .form-actions -->
+                      <div class="form-actions">
+                        <button type="submit" class="btn btn-primary ml-auto">Update Billing</button>
+                      </div>
+                      <!-- /.form-actions -->
+                    </form>
+                    <!-- /form -->
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /grid column -->
+            </div>
+            <!-- /grid row -->
+          </div>
+          <!-- /.page-section -->
+        </div>
+        <!-- /.container -->
+      </div>
+      <!-- /.page-inner -->
+    </div>
+    <!-- /.page -->
+  </div>
+  <!-- /.wrapper -->
+</main>
+<!--Main layout-->
+{% endblock %}

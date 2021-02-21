@@ -1,0 +1,230 @@
+/* Required height of parents of the Half Page Carousel for proper displaying carousel itself */
+html,
+body,
+.view {
+  height: 100%; }
+
+/* Half Page Carousel itself*/
+.carousel {
+  height: 50%; }
+  .carousel .carousel-inner {
+    height: 100%; }
+    .carousel .carousel-inner .carousel-item,
+    .carousel .carousel-inner .active {
+      height: 100%; }
+
+/* Adjustment for mobile devices*/
+@media (max-width: 776px) {
+  .carousel {
+    height: 100%; } }
+
+/* Footer color for sake of consistency with Navbar */
+.page-footer {
+  background-color: #929FBA; }
+
+
+
+
+/* 5 STARS */
+.oneStar {
+  color: #44370f;
+  cursor: pointer;
+}
+
+.twoStars {
+  color: #96781e;
+  cursor: pointer;
+}
+
+.threeStars {
+  color: #e2b52e;
+  cursor: pointer;
+}
+
+.fourStars {
+  color: #f1ba12;
+  cursor: pointer;
+}
+
+.fiveStars {
+  color: #f3cb06;
+  cursor: pointer;
+}
+
+/* PRODUCT CAROUSEL */
+.p-carousel-indicators button {
+  background-color: white;
+  opacity: .5;
+  border-style: none;
+  cursor: pointer;
+}
+.p-carousel-indicators button:hover {
+  opacity: 1;
+}
+.p-carousel-indicators button:active {
+  opacity: 1;
+  border-style: solid;
+}
+
+/* PRODUCT IMAGE SQUARE */
+.product-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+.product-image img {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+.view .product-image img {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-transition: transform .3s ease-in-out;
+  -moz-transition: transform .3s ease-in-out;
+  -o-transition: transform .3s ease-in-out;
+  transition: transform .3s ease-in-out;
+}
+.view .product-image:hover img {
+  transform: translateX(-50%) translateY(-50%) scale(1.5);
+}
+
+/* LIGHTBOX */
+
+/*Eliminates padding, centers the thumbnail */
+
+/*
+body, html {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+*/
+
+/* Styles the thumbnail */
+
+/*
+a.lightbox img {
+  height: 150px;
+  border: 3px solid white;
+  box-shadow: 0px 0px 8px rgba(0,0,0,.3);
+  margin: 94px 20px 20px 20px;
+}
+*/
+
+/* Styles the lightbox, removes it from sight and adds the fade-in transition */
+
+.lightbox-target {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,.7);
+  width: 100%;
+  opacity: 0;
+  -webkit-transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -o-transition: opacity .5s ease-in-out;
+  transition: opacity .5s ease-in-out;
+  overflow: hidden;
+  z-index: 1031;
+}
+
+/* Styles the lightbox image, centers it vertically and horizontally, adds the zoom-in transition and makes it responsive using a combination of margin and absolute positioning */
+
+.lightbox-target img {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left:0;
+  right:0;
+  bottom: 0;
+  max-height: 0%;
+  max-width: 0%;
+  /*
+  border: 3px solid white;
+  box-shadow: 0px 0px 8px rgba(0,0,0,.3);
+  box-sizing: border-box;
+  */
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+}
+
+/* Styles the close link, adds the slide down transition */
+
+a.lightbox-close {
+  display: block;
+  width:50px;
+  height:50px;
+  box-sizing: border-box;
+  background: white;
+  color: black;
+  text-decoration: none;
+  position: absolute;
+  top: -80px;
+  right: 0;
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+}
+
+/* Provides part of the "X" to eliminate an image from the close link */
+
+a.lightbox-close:before {
+  content: "";
+  display: block;
+  height: 30px;
+  width: 1px;
+  background: black;
+  position: absolute;
+  left: 26px;
+  top:10px;
+  -webkit-transform:rotate(45deg);
+  -moz-transform:rotate(45deg);
+  -o-transform:rotate(45deg);
+  transform:rotate(45deg);
+}
+
+/* Provides part of the "X" to eliminate an image from the close link */
+
+a.lightbox-close:after {
+  content: "";
+  display: block;
+  height: 30px;
+  width: 1px;
+  background: black;
+  position: absolute;
+  left: 26px;
+  top:10px;
+  -webkit-transform:rotate(-45deg);
+  -moz-transform:rotate(-45deg);
+  -o-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+}
+
+/* Uses the :target pseudo-class to perform the animations upon clicking the .lightbox-target anchor */
+
+.lightbox-target:target {
+  opacity: 1;
+  top: 0;
+  bottom: 0;
+}
+
+.lightbox-target:target img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.lightbox-target:target a.lightbox-close {
+  top: 0px;
+}

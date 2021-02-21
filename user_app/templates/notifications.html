@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="app-main">
+  <!-- .wrapper -->
+  <div class="wrapper mt-5 pt-4">
+    <!-- .page -->
+    <div class="page">
+      <!-- .page-navs -->
+      <nav class="page-navs">
+        <div class="container">
+          <!-- .nav-scroller -->
+          <div class="nav-scroller">
+            <!-- .nav -->
+            <div class="nav nav-center nav-tabs border-0">
+              <a class="nav-link" href="/user/">Current orders</a>
+              <a class="nav-link" href="/user/history/">Order history</a>
+              <a class="nav-link" href="/user/messages/">Messages
+                {% if unread_messages %}
+                <span class="badge badge-pill info-color">{{ unread_messages.count }}</span>
+                {% endif %}
+              </a>
+              <a class="nav-link active" href="/user/settings/account/">Settings</a>
+            </div>
+            <!-- /.nav -->
+          </div>
+          <!-- /.nav-scroller -->
+        </div>
+      </nav>
+      <!-- /.page-navs -->
+      <!-- .page-inner -->
+      <div class="page-inner">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <div class="container">
+              <li class="breadcrumb-item active">
+                <a href="/">
+                  <i class="breadcrumb-icon fa fa-angle-left mr-2"></i>
+                  {{ user.first_name }} {{ user.last_name }}
+                </a>
+              </li>
+            </div>
+          </ol>
+        </nav>
+        <!-- .container -->
+        <div class="container">
+          <!-- .page-section -->
+          <div class="page-section">
+            <!-- grid row -->
+            <div class="row">
+              <!-- grid column -->
+              <div class="col-lg-4">
+                <!-- .card -->
+                <div class="card card-fluid">
+                  <h6 class="card-header"> Your Details </h6>
+                  <!-- .nav -->
+                  <nav class="nav nav-tabs flex-column">
+                    <a href="/user/settings/account/" class="nav-link">Account</a>
+                    <a href="/user/settings/billing/" class="nav-link">Billing</a>
+                    <a href="/user/settings/notifications/" class="nav-link active">Notifications</a>
+                  </nav>
+                  <!-- /.nav -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /grid column -->
+              <!-- grid column -->
+              <div class="col-lg-8">
+                <!-- .card -->
+                <div class="card card-fluid">
+                  <h6 class="card-header"> Notifications </h6>
+                  <!-- .list-group -->
+                  <div class="list-group list-group-flush">
+                    <!-- .list-group-item -->
+                    <div class="list-group-item d-flex justify-content-between align-items-center"> Items go on sale
+                      <!-- .switcher -->
+                      <label class="switcher-control switcher-control-success">
+                        <input type="checkbox" name="notif01" class="switcher-input" checked="">
+                        <span class="switcher-indicator"></span>
+                      </label>
+                      <!-- /.switcher -->
+                    </div>
+                    <!-- /.list-group-item -->
+                    <!-- .list-group-item -->
+                    <div class="list-group-item d-flex justify-content-between align-items-center"> Item in your cart
+                      changes prices
+                      <!-- .switcher -->
+                      <label class="switcher-control switcher-control-success">
+                        <input type="checkbox" name="notif02" class="switcher-input" checked="">
+                        <span class="switcher-indicator"></span>
+                      </label>
+                      <!-- /.switcher -->
+                    </div>
+                    <!-- /.list-group-item -->
+                    <!-- .list-group-item -->
+                    <div class="list-group-item d-flex justify-content-between align-items-center"> Receive messages
+                      <!-- .switcher -->
+                      <label class="switcher-control switcher-control-success">
+                        <input type="checkbox" name="notif03" class="switcher-input" checked="">
+                        <span class="switcher-indicator"></span>
+                      </label>
+                      <!-- /.switcher -->
+                    </div>
+                    <!-- /.list-group-item -->
+                  </div>
+                  <!-- /.list-group -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /grid column -->
+            </div>
+            <!-- /grid row -->
+          </div>
+          <!-- /.page-section -->
+        </div>
+        <!-- /.container -->
+      </div>
+      <!-- /.page-inner -->
+    </div>
+    <!-- /.page -->
+  </div>
+  <!-- /.wrapper -->
+</main>
+<!--Main layout-->
+{% endblock %}

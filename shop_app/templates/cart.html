@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+  <div class="container wow fadeIn">
+
+    <!-- Heading -->
+    <h2 class="my-5 h2 text-center">Cart</h2>
+
+    <!--Grid row-->
+    <div class="row">
+
+      <!--Grid column-->
+      <div class="col-md-7 col-lg-8 mb-4">
+
+        <!--Card-->
+        <div class="card">
+
+          <!--Card content-->
+          <ul class="list-group z-depth-1">
+            {% if not cart_products or not cart %}
+            <li class="list-group-item">
+              <h4 class="p-2 text-center">
+                Your cart is empty 😢.
+              </h4>
+              <h6 class="text-center">
+                Fill it up with stickers
+              </h6>
+              <h5 class="p-3 text-center">
+                <a href="/"><u>Continue shopping</u></a>
+              </h5>
+            </li>
+            {% else %}
+            {% for cart_product in cart_products %}
+            <li class="list-group-item">
+              <div class="container">
+                <div class="row align-items-center">
+                  <div class="col-7 col-lg-4 my-2">
+                    <h6 class="my-0">{{ cart_product.product.name }}</h6>
+                  </div>
+                  <div class="col-5 col-lg-2 my-2 d-flex justify-content-center">
+                    <a href="/product/{{ cart_product.product.id }}/" class="product-image">
+                      {% for image in cart_product.product.images.all %}
+                      {% if image.default %}
+                      <img src="{{ image.img.url }}" class="img-fluid" alt="">
+                      {% endif %}
+                      {% endfor %}
+                    </a>
+                  </div>
+                  <div class="col-12 col-lg-2 my-2 text-center">
+                    {% if cart_product.product.discount_price %}
+                    <span>
+                      ${{ cart_product.product.discount_price }}
+                      <span class="text-danger">
+                        <small>
+                          <del>
+                            ${{ cart_product.product.price }}
+                          </del>
+                        </small>
+                      </span>
+                    </span>
+                    {% else %}
+                    <span>
+                      ${{ cart_product.product.price }}
+                    </span>
+                    {% endif %}
+                  </div>
+                  <div class="col-6 col-lg-2 my-2 text-center">
+                    <form action="/cart/product/{{ cart_product.product.id }}/change/" method="POST">
+                      {% csrf_token %}
+                      <select name="quantity" onchange="pagePosition();this.form.submit();">
+                        {% for qty in quantity %}
+                        {% if qty <= cart_product.product.quantity %}
+                        {% if qty == cart_product.quantity %}
+                        <option value="{{ qty }}" selected disabled>Qty: {{ qty }}</option>
+                        {% else %}
+                        <option value="{{ qty }}">Qty: {{ qty }}</option>
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                      </select>
+                    </form>
+                  </div>
+                  <div class="col-6 col-lg-2 my-2 text-center">
+                    <a href="/cart/product/{{ cart_product.product.id }}/remove/" class="btn btn-light btn-sm px-3" onclick="pagePosition();">
+                      <span class="d-block text-truncate">
+                        Remove
+                        <i class="fas fa-trash text-muted"></i>
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+            {% endif %}
+          </ul>
+          <!--/.Card content-->
+
+        </div>
+        <!--/.Card-->
+
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-md-5 col-lg-4 mb-4">
+
+        <!-- Heading -->
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">Your items</span>
+          {% if cart.products.count > 0 %}
+          <span class="badge badge-secondary badge-pill">{{ cart.quantity }}</span>
+          {% endif %}
+        </h4>
+
+        <!-- Cart -->
+        <ul class="list-group mb-3 z-depth-1">
+          {% for cart_product in cart_products %}
+          <li class="list-group-item px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-7 d-flex justify-content-start">
+                  <h6 class="my-0 d-block text-truncate">{{ cart_product.product.name }}</h6>
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                  <span class="badge badge-primary badge-pill">{{ cart_product.quantity }}</span>
+                </div>
+                <div class="col-3 d-flex justify-content-end">
+                  <span class="text-muted">
+                    ${{ cart_product.total }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+          {% if cart.promo_active %}
+          <li class="list-group-item d-flex justify-content-between bg-light px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-7 d-flex justify-content-start text-success">
+                  <h6 class="my-0 d-block">{{ promo.code }}</h6>
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                  <a href="/cart/promo/remove/" style="color: black;" onclick="pagePosition();">
+                      <i class="fas fa-trash text-muted"></i>
+                  </a>
+                </div>
+                <div class="col-3 d-flex justify-content-end">
+                  <span class="text-success">-${{ discount }}</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endif %}
+          <li class="list-group-item px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-8 d-flex justify-content-start">
+                  <span>Subtotal (USD)</span>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  {% if cart.promo_active %}
+                  <strong>${{ discount_total }}</strong>
+                  {% else %}
+                  <strong>${{ cart.total }}</strong>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <!-- Cart -->
+
+        {% if messages %}
+        <ul class="messages text-danger">
+          {% for message in messages %}
+          {% if 'error' in message.tags %}
+          <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Promo code -->
+        <form action="/cart/promo/" method="POST" class="card p-2 mb-3">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Promo code" aria-label="Promo code"
+              aria-describedby="basic-addon2" name="promo">
+            <div class="input-group-append">
+              <button class="btn btn-secondary btn-md waves-effect m-0" type="submit" onclick="pagePosition();">
+                Redeem
+              </button>
+            </div>
+          </div>
+        </form>
+        <!-- Promo code -->
+
+        <!-- Checkout -->
+        {% if cart.products.count > 0 %}
+        <h6 class="mb-3 text-center">
+          <span class="text-danger">FREE SHIPPING</span>
+          <small> on orders over $25!</small>
+        </h6>
+        <form action="/checkout/" method="GET" class="px-2">
+          <button class="btn btn-primary btn-md btn-block" type="submit">
+            Proceed to checkout
+          </button>
+        </form>
+        <form action="/" method="GET" class="p-2">
+          <button class="btn btn-secondary btn-md btn-block" type="submit">
+            Continue shopping
+          </button>
+        </form>
+        {% endif %}
+        <!-- Checkout -->
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+  </div>
+</main>
+<!--Main layout-->
+{% endblock %}

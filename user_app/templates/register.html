@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+  <div class="container wow fadeIn">
+
+    <!-- Heading -->
+    <h2 class="my-5 h2 text-center">Register</h2>
+
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center">
+
+      <!--Grid column-->
+      <div class="col-md-6">
+
+        <!--Card-->
+        <div class="card">
+
+          <!--Card content-->
+          <form action="/user/reg/" method="POST" class="card-body">
+            {% csrf_token %}
+
+            <!--Grid row-->
+            <div class="row">
+
+              {% if messages %}
+              <ul class="messages text-danger">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              <!--Grid column-->
+              <div class="col-md-6">
+
+                <!--firstName-->
+                <div class="md-form">
+                  <input type="text" id="first_name" class="form-control" name="first_name">
+                  <label for="firstName" class="">First name</label>
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-md-6">
+
+                <!--lastName-->
+                <div class="md-form">
+                  <input type="text" id="last_name" class="form-control" name="last_name">
+                  <label for="lastName" class="">Last name</label>
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+            </div>
+            <!--Grid row-->
+
+            <!--Username-->
+            <div class="md-form">
+              <input type="text" id="username" class="form-control" name="username">
+              <label for="username" class="">Username</label>
+            </div>
+
+            <!--email-->
+            <div class="md-form">
+              <input type="text" id="email" class="form-control" name="email">
+              <label for="email" class="">Email</label>
+            </div>
+
+            <!--password-->
+            <div class="md-form">
+              <input type="password" id="password" class="form-control" name="password">
+              <label for="password" class="">Password</label>
+            </div>
+
+            <!--confirm-pw-->
+            <div class="md-form mb-5">
+              <input type="password" id="confirm-pw" class="form-control" name="confirm_pw">
+              <label for="confirm-pw" class="">Confirm password</label>
+            </div>
+
+            <button class="btn btn-primary btn-lg btn-block mb-4" type="submit">Register</button>
+
+            <!--Grid row-->
+            <div class="row d-flex justify-content-center">
+              <p>Already have an account? <a href="/user/login/">Login.</a></p>
+            </div>
+            <!--Grid row-->
+
+          </form>
+
+        </div>
+        <!--/.Card-->
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+  </div>
+</main>
+<!--Main layout-->
+{% endblock %}

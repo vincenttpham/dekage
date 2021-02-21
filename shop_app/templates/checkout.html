@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+  <div class="container wow fadeIn">
+
+    <!-- Heading -->
+    <h2 class="my-5 h2 text-center">Checkout</h2>
+
+    <!--Grid row-->
+    <div class="row">
+
+      <!--Grid column-->
+      <div class="col-md-7 col-lg-8 mb-4">
+
+        {% if 'continue' not in request.session %}
+        <!-- Heading -->
+        <h5 class="mb-3">
+          <span class="text-muted">Enter your shipping info</span>
+        </h5>
+        <h6 class="text-muted mb-3">An emailed receipt will be sent with your order details</h6>
+        {% endif %}
+
+        <!--Card-->
+        <div class="card">
+
+          <!--Card content-->
+          {% if 'continue' not in request.session %}
+          <!--Card content-->
+          <form action="/checkout/continue/{{ cart.id }}/" method="POST" class="card-body">
+            {% csrf_token %}
+
+            <!--Grid row-->
+            <div class="row">
+
+              <!--Grid column-->
+              <div class="col-md-6 mb-2">
+
+                <!--firstName-->
+                <div class="md-form">
+                  <input type="text" id="firstName" class="form-control" name="first_name" value="{{ request.session.first_name }}" required>
+                  <label for="firstName" class="">First name</label>
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-md-6 mb-2">
+
+                <!--lastName-->
+                <div class="md-form">
+                  <input type="text" id="lastName" class="form-control" name="last_name" value="{{ request.session.last_name }}" required>
+                  <label for="lastName" class="">Last name</label>
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+            </div>
+            <!--Grid row-->
+
+            {% if messages %}
+            <ul class="messages text-danger">
+              {% for message in messages %}
+              {% if 'warning' in message.tags %}
+              <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+            {% endif %}
+
+            <!--email-->
+            <div class="md-form mb-5">
+              <input type="text" id="email" class="form-control" placeholder="youremail@example.com" name="email" value="{{ request.session.email }}" required>
+              <label for="email" class="">Email</label>
+            </div>
+
+            <!--address-->
+            <div class="md-form mb-5">
+              <input type="text" id="address" class="form-control" placeholder="1234 Main St" name="address" value="{{ request.session.address }}" required>
+              <label for="address" class="">Address</label>
+            </div>
+
+            <!--address-2-->
+            <div class="md-form mb-5">
+              <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite" name="address_2" value="{{ request.session.address_2 }}">
+              <label for="address-2" class="">Address 2 (optional)</label>
+            </div>
+
+            <!--city-->
+            <div class="md-form mb-5">
+              <input type="text" id="city" class="form-control" placeholder="" name="city" value="{{ request.session.city }}" required>
+              <label for="city" class="">City</label>
+            </div>
+
+            <!--Grid row-->
+            <div class="row">
+
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-12 mb-4">
+
+                <label for="country">Country</label>
+                <select class="custom-select d-block w-100" id="country" name="country" required>
+                  <option value="" selected disabled>Choose...</option>
+                  {% if request.session.country == 'US' %}
+                  <option value="US" selected>United States</option>
+                  {% else %}
+                  <option value="US">United States</option>
+                  {% endif %}
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-6 mb-4">
+
+                <label for="state">State</label>
+                <input type="text" class="form-control" id="state" placeholder="" name="state" maxlength="2" value="{{ request.session.state }}" required>
+                <!--
+                <select class="custom-select d-block w-100" id="state" name="state">
+                  <option selected disabled>Choose...</option>
+                  <option value="CA">California</option>
+                </select>
+                -->
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-6 mb-4">
+
+                <label for="zip">Zip</label>
+                <input type="text" class="form-control" id="zip" placeholder="" name="zipcode" value="{{ request.session.zipcode }}" required>
+                <div class="invalid-feedback">
+                  Zip code required.
+                </div>
+
+              </div>
+              <!--Grid column-->
+
+            </div>
+            <!--Grid row-->
+            
+            <!--
+            <hr>
+
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="save-info" name="save_info">
+              <label class="custom-control-label" for="save-info">Save this information for next time</label>
+            </div>
+            -->
+
+            <hr class="my-4">
+
+            <h6 class="mb-3">Shipping method</h6>
+
+            {% for method in shipping_methods %}
+            <div class="form-check">
+              {% if forloop.first %}
+              <input type="radio" class="form-check-input" id="shipping_method" name="shipping_method" value="{{ method.mail_type }}" required checked>
+              {% if cart.total >= 25 %}
+              <label for="shipping_method" class="form-check-label">
+                <span class="text-success">FREE</span>
+                <del class="text-muted"></del> - {{ method.name }}
+              </label>
+              {% else %}
+              <label for="shipping_method" class="form-check-label">{{ method.name }}</label>
+              {% endif %}
+              {% else %}
+              <input type="radio" class="form-check-input" id="shipping_method" name="shipping_method" value="{{ method.mail_type }}" required>
+              <label for="shipping_method" class="form-check-label">{{ method.name }}</label>
+              {% endif %}
+            </div>
+            {% endfor %}
+
+            <hr class="mb-4">
+
+            <button class="btn btn-primary btn-lg btn-block" type="submit">
+              Continue
+            </button>
+
+          </form>
+
+          {% else %}
+
+          <input id="cart-id" value="{{ cart.id }}" hidden>
+          <div id="paypal-button-container" class="m-3"></div>
+          <a href="/checkout/return/" class="btn btn-light btn-lg m-3">Return to shipping</a>
+          {% endif %}
+          <h1>{{ request.session.shipping_data }}</h1>
+
+        </div>
+        <!--/.Card-->
+
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-md-5 col-lg-4 mb-4">
+
+        <!-- Heading -->
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">Order summary</span>
+          {% if cart.products.count > 0 %}
+          <span class="badge badge-secondary badge-pill">{{ cart.quantity }}</span>
+          {% endif %}
+        </h4>
+
+        <!-- Cart -->
+        <ul class="list-group mb-3 z-depth-1">
+          {% for cart_product in cart_products %}
+          <li class="list-group-item px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-7 d-flex justify-content-start">
+                  <h6 class="my-0 d-block text-truncate">{{ cart_product.product.name }}</h6>
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                  <span class="badge badge-primary badge-pill">{{ cart_product.quantity }}</span>
+                </div>
+                <div class="col-3 d-flex justify-content-end">
+                  <span class="text-muted">
+                    ${{ cart_product.total }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+          {% if cart.promo_active %}
+          <li class="list-group-item d-flex justify-content-between bg-light px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-8 justify-content-start text-success">
+                  <h6 class="my-0">{{ promo.code }}</h6>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <span class="text-success">-${{ discount }}</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endif %}
+          <li class="list-group-item px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-8 d-flex justify-content-start">
+                  <h6 class="my-0 d-block text-truncate">Subtotal</h6>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <span class="text-muted">
+                    ${{ subtotal }}
+                  </span>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-8 d-flex justify-content-start">
+                  <h6 class="my-0 d-block text-truncate">Tax</h6>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <span class="text-muted">
+                    ${{ tax }}
+                  </span>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-8 d-flex justify-content-start">
+                  <h6 class="my-0 d-block text-truncate">Shipping</h6>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <span class="text-muted">
+                    ${{ shipping_cost }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item px-0">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-6 d-flex justify-content-start">
+                  <span>Total (USD)</span>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                  <strong>${{ cart_total }}</strong>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <!-- Cart -->
+
+        {% if messages %}
+        <ul class="messages text-danger">
+          {% for message in messages %}
+          {% if 'error' in message.tags %}
+          <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if 'continue' not in request.session %}
+        <form action="/cart" method="GET">
+          <button class="btn btn-light btn-md my-0" type="submit">
+            <i class="fas fa-long-arrow-alt-left"></i>
+            Back to cart
+          </button>
+        </form>
+        {% endif %}
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+  </div>
+</main>
+<!--Main layout-->
+{% endblock %}

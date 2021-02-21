@@ -1,0 +1,613 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+  <div class="container dark-grey-text mt-5 pt-4">
+
+    <!--Grid row-->
+    <div class="row wow fadeIn">
+
+      <!--Grid column-->
+      <div class="p-carousel-indicators col-lg-2 col-md-3 col-sm-12 col-12">
+        <div class="container">
+          <div class="row justify-content-start">
+            {% for image in images %}
+            <div class="col-md-6 col-sm-3 col-3 m-1 d-flex">
+              <button class="" data-target="#product-carousel" data-slide-to="{{ forloop.counter0 }}" style="background-image: url('{{ image.img.url }}'); background-repeat: no-repeat; background-size: contain; background-position: center; width: 100%; height: 0; padding-bottom: 100%;">
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-lg-6 col-md-5 col-sm-12 col-12">
+
+        <!--Carousel Wrapper-->
+        <div id="product-carousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval="0">
+
+          <!--Slides-->
+          <div class="carousel-inner" role="listbox">
+
+            <!--First slide-->
+            {% for image in images %}
+            {% if forloop.first %}
+            <div class="carousel-item active">
+            {% else %}
+            <div class="carousel-item">
+            {% endif %}
+              <a class="lightbox" href="#{{ image.img.url }}">
+                <div class="product-image">
+                  <img src="{{ image.img.url }}">
+                </div>
+              </a>
+            </div>
+            <div class="lightbox-target" id="{{ image.img.url }}">
+              <a href="#">
+                <img src="{{ image.img.url }}">
+              </a>
+              <a href="#" class="lightbox-close"></a>
+            </div>
+            {% endfor %}
+            <!--/First slide-->
+
+          </div>
+          <!--/.Slides-->
+
+        </div>
+        <!--/.Carousel Wrapper-->
+
+        <!--
+        <img src="{{ product.image.url }}" class="img-fluid" alt="">
+        -->
+
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-md-4 mb-4">
+
+        <!--Content-->
+        <div class="p-0">
+
+          <div class="mb-3">
+            <a href="">
+              <span class="badge purple mr-1">{{ product.category }}</span>
+            </a>
+            {% if product.discount_price %}
+            <a href="">
+              <span class="badge danger-color mr-1">Sale</span>
+            </a>
+            {% endif %}
+            {% if product.created_at.timestamp > old %}
+            <a href="">
+              <span class="badge primary-color mr-1">New</span>
+            </a>
+            {% endif %}
+            {% if product in best_sellers %}
+            <a href="">
+              <span class="badge orange mr-1">Bestseller</span>
+            </a>
+            {% endif %}
+          </div>
+
+          <p class="lead">
+            {% if product.discount_price %}
+            <span>
+              ${{ product.discount_price }}
+              <small class="text-muted">
+                <del>${{ product.price }}</del>
+              </small>
+            </span>
+            {% else %}
+            <span>${{ product.price }}</span>
+            {% endif %}
+          </p>
+
+          <p>
+            {% for i in '12345'|make_list %}
+            {% if average_rating >= forloop.counter %}
+            <i class="fas fa-star"></i>
+            {% elif average_rating < forloop.counter and average_rating > forloop.counter|add:-1 %}
+            <i class="fas fa-star-half-alt"></i>
+            {% else %}
+            <i class="far fa-star"></i>
+            {% endif %}
+            {% endfor %}
+            {{ average_rating }}
+            ({{ product.reviews.all.count }})
+          </p>
+
+          <p class="lead font-weight-bold">{{ product.name }}</p>
+
+          <p>{{ product.description }}</p>
+
+          {% if product.quantity < 1 %}
+          <p class="text-danger">Currently unavailable.</p>
+          {% else %}
+          {% if product.quantity <= 5 %}
+          <p class="text-danger">Only {{ product.quantity }} left in stock - order soon.</p>
+          {% endif %}
+
+          {% if product_in_cart %}
+          <form action="/cart/product/{{ product.id }}/change/" method="POST">
+            {% csrf_token %}
+            <!-- Default input -->
+            <select name="quantity">
+              {% for qty in quantity %}
+              {% if qty <= product.quantity %}
+              {% if qty == product_in_cart.quantity %}
+              <option value="{{ qty }}" selected>Qty: {{ qty }}</option>
+              {% else %}
+              <option value="{{ qty }}">Qty: {{ qty }}</option>
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+            </select>
+            <button class="btn btn-info btn-md my-0 p" type="submit">Change quantity
+              <i class="fas fa-exchange-alt ml-1"></i>
+            </button>
+          </form>
+          {% else %}
+          <form action="/product/{{ product.id }}/add/" method="POST" class="d-flex justify-content-left">
+            {% csrf_token %}
+            <!-- Default input -->
+            <select name="quantity">
+              {% for qty in quantity %}
+              {% if qty <= product.quantity %}
+              <option value="{{ qty }}">Qty: {{ qty }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i>
+            </button>
+
+          </form>
+          {% endif %}
+          {% endif %}
+
+        </div>
+        <!--Content-->
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+    <hr>
+
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center wow fadeIn">
+
+      <!--Grid column-->
+      <div class="col-md-6 text-center">
+
+        <h4 class="my-4 h4">Similar products</h4>
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+    <!--Grid row-->
+    <div class="row wow fadeIn mt-3 d-flex justify-content-around">
+
+      {% for item in related_products|slice:"3" %}
+      <!--Grid column-->
+      <div class="col-lg-3 col-md-4 mb-4 d-flex align-items-stretch justify-content-center">
+
+        <!--Card-->
+        <div class="card w-100">
+
+          <!--Card image-->
+          {% if item.quantity < 1 %}
+          <div class="view">
+            <div class="product-image">
+              {% for image in item.images.all %}
+              {% if image.default %}
+              <img src="{{ image.img.url }}" class="" alt="">
+              {% endif %}
+              {% endfor %}
+              <a href="/product/{{ item.id }}/">
+                <div class="mask flex-center rgba-black-strong">
+                  <h3 class="white-text">Out of stock</h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          {% else %}
+          <div class="view overlay">
+            <div class="product-image">
+              {% for image in item.images.all %}
+              {% if image.default %}
+              <img src="{{ image.img.url }}" class="" alt="">
+              {% endif %}
+              {% endfor %}
+              <a href="/product/{{ item.id }}/">
+                <div class="mask rgba-white-slight"></div>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+          <!--Card image-->
+
+          <!--Card content-->
+          <div class="card-body text-center">
+            <!--Category & Title-->
+            <h5 class="grey-text">{{ item.category.name }}</h5>
+            <h5>
+              <a href="/product/{{ item.id }}/" class="dark-grey-text d-block text-truncate">
+                {{ item.name }}
+              </a>
+            </h5>
+
+            <p class="lead pt-3">
+              {% if item.discount_price %}
+              ${{ item.discount_price }}
+              <small class="text-muted">
+                <del>${{ item.price }}</del>
+              </small>
+              {% else %}
+              ${{ item.price }}
+              {% endif %}
+            </p>
+
+          </div>
+          <!--Card content-->
+
+        </div>
+        <!--Card-->
+
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+
+    </div>
+    <!--Grid row-->
+
+    <hr>
+
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center wow fadeIn">
+
+      <!--Grid column-->
+      <div class="col-md-6 text-center">
+
+        <h4 class="my-4 h4">Customer reviews</h4>
+
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+    <!--Grid row-->
+    <div class="row wow fadeIn mt-3">
+
+      <!--Grid column-->
+      <div class="col-12 order-12 col-md-7 order-md-1 col-lg-8 mb-4">
+
+        {% if request.session.review == product.id %}
+        <!--Write review-->
+        <div class="card mb-4" id="write_review">
+          <ul class="list-group z-depth-1">
+            <li class="list-group-item">
+
+              <h4 class="text-center">Write a review</h4>
+
+              {% if messages %}
+              <ul class="messages text-danger">
+                {% for message in messages %}
+                {% if 'warning' in message.tags %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              <!--Card content-->
+              <form action="/review/{{ product.id }}/submit/" method="POST" class="card-body">
+                {% csrf_token %}
+
+                <!--Grid row-->
+                <div class="row">
+
+                  <!--Grid column-->
+                  <div class="col-md-6">
+
+                    <!--Name-->
+                    <div class="md-form">
+                      {% if request.session.update_review == product.id %}
+                      {% for review in product.reviews.all %}
+                      {% if review.order_id == request.session.order_id %}
+                      {% if review.product == product %}
+                      <input type="text" id="username" class="form-control text-muted border-bottom-0" name="username" value="{{ review.username }}" readonly>
+                      {% endif %}
+                      {% endif %}
+                      {% endfor %}
+                      {% else %}
+                      <input type="text" id="username" class="form-control" name="username">
+                      {% endif %}
+                      <label for="username" class="">Name</label>
+                    </div>
+
+                  </div>
+                  <!--Grid column-->
+
+                  <!--Grid column-->
+                  <div class="col-md-6 d-flex justify-content-center align-items-center">
+                    <span id="rateMe">
+                      <input type="radio" name="rating" value="1" id="1" hidden>
+                      <label for="1">
+                        <i class="far fa-star py-2 px-1 rate-popover" data-index="0" data-html="true" data-toggle="popover"
+                        data-placement="top" title="Very bad" onclick="document.getElementById('1').checked=true;"></i>
+                      </label>
+                      <input type="radio" name="rating" value="2" id="2" hidden>
+                      <label for="2">
+                        <i class="far fa-star py-2 px-1 rate-popover" data-index="1" data-html="true" data-toggle="popover"
+                        data-placement="top" title="Poor" onclick="document.getElementById('2').checked=true;"></i>
+                      </label>
+                      <input type="radio" name="rating" value="3" id="3" hidden>
+                      <label for="3">
+                        <i class="far fa-star py-2 px-1 rate-popover" data-index="2" data-html="true" data-toggle="popover"
+                        data-placement="top" title="OK" onclick="document.getElementById('3').checked=true;"></i>
+                      </label>
+                      <input type="radio" name="rating" value="4" id="4" hidden>
+                      <label for="4">
+                        <i class="far fa-star py-2 px-1 rate-popover" data-index="3" data-html="true" data-toggle="popover"
+                        data-placement="top" title="Good" onclick="document.getElementById('4').checked=true;"></i>
+                      </label>
+                      <input type="radio" name="rating" value="5" id="5" hidden>
+                      <label for="5">
+                        <i class="far fa-star py-2 px-1 rate-popover" data-index="4" data-html="true" data-toggle="popover"
+                          data-placement="top" title="Excellent" onclick="document.getElementById('5').checked=true;"></i>
+                      </label>
+                    </span>
+                  </div>
+                  <!--Grid column-->
+
+                </div>
+                <!--Grid row-->
+
+                <!--Review body-->
+                <div class="md-form mb-0">
+                  {% if request.session.update_review == product.id %}
+                  {% for review in product.reviews.all %}
+                  {% if review.order_id == request.session.order_id %}
+                  {% if review.product == product %}
+                  <textarea type="text" id="review_body" class="form-control border-top-0 border-left-0 border-right-0" name="review_body">{{ review.body }}</textarea>
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                  {% else %}
+                  <textarea type="text" id="review_body" class="form-control border-top-0 border-left-0 border-right-0" name="review_body"></textarea>
+                  {% endif %}
+                  <label for="review_body" class="">Review</label>
+                </div>
+
+                <button class="btn btn-primary btn-md" type="submit" onclick="pagePosition()">
+                  {% if request.session.update_review == product.id %}
+                  Update review
+                  {% else %}
+                  Submit review
+                  {% endif %}
+                </button>
+
+              </form>
+            </li>
+          </ul>
+        </div>
+        {% endif %}
+
+        {% if product.reviews.all.count < 1 %}
+        <div class="card">
+          <ul class="list-group z-depth-1">
+            <li class="list-group-item">
+              <h5>There are no customer reviews for this product yet.</h5>
+            </li>
+          </ul>
+        </div>
+        {% else %}
+        <h5 class="mb-4">
+          {{ product.reviews.all.count }}
+          {% if product.reviews.all.count > 1 %}
+          reviews
+          {% else %}
+          review
+          {% endif %}
+          {% for i in '12345'|make_list %}
+            {% if average_rating >= forloop.counter %}
+            <i class="fas fa-star"></i>
+            {% elif average_rating < forloop.counter and average_rating > forloop.counter|add:-1 %}
+            <i class="fas fa-star-half-alt"></i>
+            {% else %}
+            <i class="far fa-star"></i>
+            {% endif %}
+            {% endfor %}
+        </h5>
+
+        <form action="/review/{{ product.id }}/sort/" method="POST" class="mb-4">
+          {% csrf_token %}
+          <select name="sort_reviews_by" onchange="pagePosition();this.form.submit();">
+            {% if not request.session.sort_reviews_by %}
+            <option value="newest" selected disabled>Most recent</option>
+            {% else %}
+            <option value="newest">Most recent</option>
+            {% endif %}
+            {% if 'rating' in request.session.sort_reviews_by %}
+            <option value="rating" selected disabled>Top reviews</option>
+            {% else %}
+            <option value="rating">Top reviews</option>
+            {% endif %}
+          </select>
+        </form>
+
+        <!--Reviews-->
+        <div class="card">
+          <ul class="list-group z-depth-1">
+            {% for review in page_object %}
+            <li class="list-group-item">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <h6 class="my-0">{{ review.username }}</h6>
+                    {% if review.updated %}
+                    <small>Updated on {{ review.updated_at|date }}</small>
+                    {% else %}
+                    <small>{{ review.created_at|date }}</small>
+                    {% endif %}
+                    <div class="my-2 d-flex">
+                      {% for i in '12345'|make_list %}
+                      {% if review.rating >= forloop.counter %}
+                      <i class="fas fa-star"></i>
+                      {% else %}
+                      <i class="far fa-star"></i>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <h6>{{ review.body }}</h6>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <!--/Reviews-->
+        {% endif %}
+
+        <!--Pagination-->
+        {% if page_object.paginator.num_pages > 1 %}
+        <nav class="d-flex justify-content-center wow fadeIn my-4">
+          <ul class="pagination pg-dark">
+
+            <!--Arrow left-->
+            {% if page_object.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.previous_page_number }}" aria-label="Previous" onclick="pagePosition()">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% endif %}
+
+            {% for page in page_object.paginator.page_range %}
+            {% if forloop.counter <= 5 %}
+            {% if page == page_object.number %}
+            <li class="page-item active">
+              <a class="page-link" href="?page={{ forloop.counter }}" onclick="pagePosition()">{{ forloop.counter }}
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ forloop.counter }}" onclick="pagePosition()">{{ forloop.counter }}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if page_object.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.next_page_number }}" aria-label="Next" onclick="pagePosition()">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+        <!--Pagination-->
+
+      </div>
+      <!--/Grid column-->
+
+      <!--Grid column-->
+      <div class="col-12 order-1 col-md-5 order-md-12 col-lg-4 mb-4">
+        <ul class="list-group mb-3 z-depth-1">
+          <li class="list-group-item">
+            <h6>Enter your order id to submit a review!</h6>
+          </li>
+        </ul>
+
+        {% if messages %}
+        {% if request.session.existing_review == product.id %}
+        <ul class="messages text-info">
+        {% else %}
+        <ul class="messages text-danger">
+        {% endif %}
+          {% for message in messages %}
+          {% if 'error' in message.tags %}
+          <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if request.session.existing_review == product.id %}
+        <ul class="messages text-info">
+          <li>Did you want to update your review?</li>
+        </ul>
+        <div class="row align-items-center mb-3">
+          <form action="/review/{{ product.id }}/update/cancel/" method="POST" class="col-6 d-flex justify-content-end">
+            {% csrf_token %}
+            <button class="btn btn-light btn-md waves-effect m-0" type="submit" onclick="pagePosition()">
+              Cancel
+            </button>
+          </form>
+          <form action="/review/{{ product.id }}/update/" method="POST" class="col-6 d-flex justify-content-start">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-md waves-effect m-0" type="submit" onclick="pagePosition()">
+              Update
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
+        <form action="/review/{{ product.id }}/" method="POST" class="card p-2 mb-3">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Order ID" aria-label="Order ID"
+              aria-describedby="basic-addon2" name="order_id">
+            <div class="input-group-append">
+              <button class="btn btn-secondary btn-md waves-effect m-0" type="submit" onclick="pagePosition()">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+  </div>
+</main>
+<!--Main layout-->
+{% endblock %}

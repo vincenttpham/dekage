@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main class="app-main">
+  <!-- .wrapper -->
+  <div class="wrapper mt-5 pt-4">
+    <!-- .page -->
+    <div class="page">
+      <!-- .page-navs -->
+      <nav class="page-navs">
+        <div class="container">
+          <!-- .nav-scroller -->
+          <div class="nav-scroller">
+            <!-- .nav -->
+            <div class="nav nav-center nav-tabs border-0">
+              <a class="nav-link active" href="/user/">Current orders</a>
+              <a class="nav-link" href="/user/history/">Order history</a>
+              <a class="nav-link" href="/user/messages/">Messages
+                {% if unread_messages %}
+                <span class="badge badge-pill info-color">{{ unread_messages.count }}</span>
+                {% endif %}
+              </a>
+              <a class="nav-link" href="/user/settings/account/">Settings</a>
+            </div>
+            <!-- /.nav -->
+          </div>
+          <!-- /.nav-scroller -->
+        </div>
+      </nav>
+      <!-- /.page-navs -->
+      <!-- .page-inner -->
+      <div class="page-inner">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <div class="container">
+              <li class="breadcrumb-item active">
+                <a href="/">
+                  <i class="breadcrumb-icon fa fa-angle-left mr-2"></i>
+                  {{ user.first_name }} {{ user.last_name }}
+                </a>
+              </li>
+            </div>
+          </ol>
+        </nav>
+        <!-- .container -->
+        <div class="container">
+          <!-- .page-section -->
+          <div class="page-section">
+            <!-- .section-block -->
+            <div class="section-block">
+              <!-- .board -->
+              <div class="board board-list">
+                <!-- .tasks -->
+                <section class="tasks">
+                  <!-- .task-header -->
+                  <h1 class="task-title mr-auto"> Current orders
+                    <small class="">({{ orders.count }})</small>
+                  </h1>
+                  {% if orders %}
+                  <form action="/user/sort/" method="POST">
+                    {% csrf_token %}
+                    <select class="custom-select" style="width:160px" name="sort_by">
+                      {% if 'sort_by' in request.session %}
+                      <option value="oldest"> Sort by (old) </option>
+                      <option value="newest"> Sort by (new) </option>
+                      {% else %}
+                      <option value="newest"> Sort by (new) </option>
+                      <option value="oldest"> Sort by (old) </option>
+                      {% endif %}
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm">Go</button>
+                  </form>
+                  {% else %}
+                  <h4 class="mt-3 mb-3">Place an order to see its details here.</h4>
+                  {% endif %}
+                  <!-- /.task-header -->
+                  {% for order in orders %}
+                  <!-- .task-issue -->
+                  <div class="task-issue">
+                    <!-- .card -->
+                    <div class="card p-2">
+                      <h4 class="card-title">
+                        <a href="">Order #{{ order.id }}</a>
+                      </h4>
+                      <h6 class="card-subtitle text-muted">
+                        <time class="text-muted">{{ order.created_at|time }}</time> /
+                        <time class="text-muted">{{ order.created_at|date }}</time>
+                        <span class="mx-1">·</span>
+                        <span class="due-date">
+                          <i class="far fa-fw fa-clock"></i> {{ eta }} days </span>
+                      </h6>
+                      <!-- .card-body -->
+                      <div class="card-body">
+                        <!-- .list-group -->
+                        <div class="list-group">
+                          <span>Total (USD): <strong>${{ order.total }}</strong></span>
+                          <!-- .list-group-item -->
+                          <div class="list-group-item rgba-grey-slight">
+                            <!-- .list-group-item-body -->
+                            <div class="list-group-item-body py-1 text-truncate">
+                              <a href="#" class="tile tile-sm bg-indigo text-white" data-toggle="tooltip" title=""
+                                data-original-title=""></a>
+                              <!--
+                            <span class="text-muted mx-2">
+                              <i class="fa fa-long-arrow-alt-right"></i>
+                            </span>
+                            -->
+                              <!-- products -->
+                              <div class="avatar-group row">
+                                {% for product in order.products.all %}
+                                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
+                                  <div class="card">
+                                    <label class="d-block">
+                                      {{ product.product.name }} ({{ product.quantity }})
+                                    </label>
+                                    <a href="/product/{{ product.product.id }}/" class="user-avatar user-avatar-sm"
+                                      data-toggle="tooltip" title="" data-original-title="">
+                                      <img src="{{ product.product.image.url }}" alt="" class="" id="product_image">
+                                    </a>
+                                  </div>
+                                </div>
+                                {% endfor %}
+                              </div>
+                              <!-- /products -->
+                            </div>
+                            <!-- /.list-group-item-body -->
+                          </div>
+                          <!-- /.list-group-item -->
+                        </div>
+                        <!-- /.list-group -->
+                      </div>
+                      <!-- /.card-body -->
+                      <!-- .card-footer -->
+                      <footer class="card-footer">
+                        <a href="/user/cancel/{{ order.id }}/"
+                          class="card-footer-item card-footer-item-bordered text-muted">
+                          <i class="oi oi-comment-square mr-1"></i>
+                          Cancel order
+                          <i class="fas fa-ban"></i>
+                        </a>
+                      </footer>
+                      <!-- /.card-footer -->
+                    </div>
+                    <!-- .card -->
+                  </div>
+                  <!-- /.task-issue -->
+                  {% endfor %}
+                </section>
+                <!-- /.tasks -->
+              </div>
+              <!-- /.board -->
+            </div>
+            <!-- /.section-block -->
+          </div>
+          <!-- /.page-section -->
+        </div>
+        <!-- /.container -->
+      </div>
+      <!-- /.page-inner -->
+    </div>
+    <!-- /.page -->
+  </div>
+  <!-- /.wrapper -->
+</main>
+<!--Main layout-->
+{% endblock %}
