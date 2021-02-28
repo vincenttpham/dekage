@@ -137,7 +137,7 @@ def product(request, id):
     images = Image.objects.filter(product=product).order_by('-default')
     related_products = Product.objects.filter(
         category__name=product.category.name).exclude(id=product.id).order_by('-sales')
-    quantity = range(1, 11)
+    quantity = range(1, 21)
     ordered_products = Product.objects.all().order_by('-sales')
     best_sellers = [ordered_products[0], ordered_products[1], ordered_products[2]]
     month = datetime.datetime.today() - timedelta(days=30)
@@ -167,10 +167,12 @@ def product(request, id):
                 cart.quantity += cart_product.quantity
             cart.save()
         product_in_cart = cart.products.filter(product=product, cart=cart)
-        available_quantity = 0
+        available_quantity = 20
+        if product.quantity < 20:
+            available_quantity = product.quantity
         if product_in_cart:
             product_in_cart = cart.products.get(product=product, cart=cart)
-            available_quantity = (product.quantity - product_in_cart.quantity)
+            available_quantity = (available_quantity - product_in_cart.quantity)
         context = {
             "user": user,
             "product": product,
@@ -195,10 +197,12 @@ def product(request, id):
                 cart.quantity += cart_product.quantity
             cart.save()
         product_in_cart = cart.products.filter(product=product, cart=cart)
-        available_quantity = 0
+        available_quantity = 20
+        if product.quantity < 20:
+            available_quantity = product.quantity
         if product_in_cart:
             product_in_cart = cart.products.get(product=product, cart=cart)
-            available_quantity = (product.quantity - product_in_cart.quantity)
+            available_quantity = (available_quantity - product_in_cart.quantity)
         context = {
             "product": product,
             "cart": cart,
@@ -257,7 +261,7 @@ def cart(request):
         del request.session['shipping_rate']
     if 'shipping_method' in request.session:
         del request.session['shipping_method']
-    quantity = range(1, 11)
+    quantity = range(1, 21)
     if 'user_id' in request.session:
         user = User.objects.get(id=request.session['user_id'])
         unread_messages = Message.objects.filter(receiver=user, read=False)

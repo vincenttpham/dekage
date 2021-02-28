@@ -133,12 +133,13 @@
             {% csrf_token %}
             <!-- Default input -->
             <select class="custom-select w-auto" name="quantity">
-              {% if available_quantity < 1 %}
-              <option selected disabled>Qty: 0</option>
-              {% else %}
               {% for qty in quantity %}
               {% if product_in_cart %}
-              {% if qty <= available_quantity %}
+              {% if available_quantity < 1 %}
+              {% if forloop.first %}
+              <option selected disabled>Qty: Max</option>
+              {% endif %}
+              {% elif qty <= available_quantity %}
               <option value="{{ qty }}">Qty: {{ qty }}</option>
               {% endif %}
               {% else %}
@@ -147,12 +148,17 @@
               {% endif %}
               {% endif %}
               {% endfor %}
-              {% endif %}
             </select>
+            {% if product_in_cart %}
             {% if available_quantity < 1 %}
             <button class="btn btn-primary btn-md my-0 p" type="submit" disabled>Add to cart
               <i class="fas fa-shopping-cart ml-1"></i>
             </button>
+            {% else %}
+            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i>
+            </button>
+            {% endif %}
             {% else %}
             <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
               <i class="fas fa-shopping-cart ml-1"></i>
