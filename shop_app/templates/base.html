@@ -7,6 +7,12 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Dekage</title>
   {% load static %}
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+  <link href ="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel = "stylesheet" crossorigin="anonymous">
+  <!-- Favicons -->
+  <link href="{% static 'img/logo/dekage_favicon.png' %}" type="image/png" rel="shortcut icon">
+  <link href="{% static 'img/logo/dekage_apple-touch-icon.png' %}" rel="apple-touch-icon">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
   <!-- Bootstrap core CSS -->
@@ -55,8 +61,8 @@
 
       <!-- Brand -->
       <a class="navbar-brand waves-effect" href="/">
-        <img src="{% static 'img/logo/dekagePNG-02.png/' %}" style="height: 50px; position: absolute; top: -5px;">
-        <strong class="ml-5 text-white">대가게</strong>
+        <img src="{% static 'img/logo/dekagePNG-02.png' %}" style="height: 50px; position: absolute; top: -5px;">
+        <strong class="ml-5 text-white fredokaOne">dekage</strong>
       </a>
 
       <!-- Collapse -->
@@ -97,8 +103,49 @@
         </ul>
 
         <!-- Right -->
+        <!--
+        <ul class="nav navbar-nav nav-flex-icons">
+          <li class="dropdown">
+          {% if 'user_id' in request.session or 'cart_id' in request.session %}
+            {% if cart.quantity > 0 %}
+            <a href="/cart/" class="nav-link waves-effect">
+              <span class="badge red z-depth-1 mr-1"> {{ cart.quantity }} </span>
+              <i class="text-white fas fa-shopping-cart"></i>
+              <span class="text-white clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+            <ul class="dropdown-menu" data-toggle="dropdown">
+              {% for cart_product in cart.products.all  %}
+              <li><a class="dropdown-item" href="/cart/">{{ cart_product.quantity }} x {{ cart_product.product.name }}</a></li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+            {% else %}
+            <a href="/cart/" class="nav-link waves-effect">
+              <span class="badge red z-depth-1 mr-1"> 0 </span>
+              <i class="text-white fas fa-shopping-cart"></i>
+              <span class="text-white clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+            <ul class="dropdown-menu" data-toggle="dropdown">
+              <li class="dropdown-item">
+                <h6 class="p-2 text-center">
+                  Your cart is empty .
+                </h6>
+                <h6>
+                  Fill it up with stickers
+                </h6>
+                <h6>
+                  <a href="/"><u>Continue shopping</u></a>
+                </h6>
+              </li>
+            </ul>
+          {% endif %}
+          </li>
+        </ul>
+        -->
+
+        <!-- Right-->
         <ul class="navbar-nav nav-flex-icons">
-          <li class="nav-item">
+          <li class="nav-item dropdown">
             <a href="/cart/" class="nav-link waves-effect">
               {% if 'user_id' in request.session or 'cart_id' in request.session %}
               {% if cart.quantity > 0 %}
@@ -107,6 +154,9 @@
               {% endif %}
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+              <div class="dropdown-menu dropdown-menu-left" data-toggle="dropdown">
+                <span class="dropdown-item">Hello</span>
+              </div>
             </a>
           </li>
         </ul>
@@ -150,20 +200,16 @@
     <div class="container">
       <div class="row align-items-center d-flex justify-content-between">
         <div class="col-4 col-md-3 d-flex justify-content-start pt-3">
-          <a href="/contact/"><u>Contact</u></a>
-          <span class="mx-2">|</span>
-          <a href="https://www.facebook.com" target="_blank">
+          <a href="https://www.facebook.com/dekageshop" target="_blank" class="pl-4">
             <i class="fab fa-facebook-f"></i>
           </a>
         </div>
         <div class="col-4 col-md-3 pt-3">
-          <img src="{% static 'img/logo/dekagePNG-02.png/' %}" style="height: 80px;">
+          <img src="{% static 'img/logo/dekagePNG-02.png' %}" style="height: 80px;">
         </div>
         <div class="col-4 col-md-3 d-flex justify-content-end pt-3">
           <div>
-            <span class="d-block">Dekage</span>
-            <span class="d-block">대가게</span>
-            <span class="d-block">で影</span>
+            <span class="d-block lead fredokaOne">dekage</span>
           </div>
         </div>
       </div>
@@ -175,9 +221,9 @@
     <div class="container">
       <div class="row align-items-center d-flex justify-content-between">
         <div class="col-4 col-md-3 d-flex justify-content-start pb-3">
-          <img src="{% static 'img/paypal/Badge_1.png/' %}" style="height: 60px;">
+          <img src="{% static 'img/paypal/Badge_1.png' %}" style="height: 60px;">
         </div>
-        <div class="col-4 col-md-3 pb-3">
+        <div class="col-4 col-md-3 col-xxl-2 pb-3">
           <!-- PayPal Logo -->
           <table border="0" cellpadding="0" cellspacing="0" align="center">
             <tr>
@@ -194,7 +240,12 @@
           </table>
           <!-- PayPal Logo -->
         </div>
-        <div class="col-4 col-md-3 d-flex justify-content-end">
+        <div class="col-4 col-md-3 d-flex justify-content-end pb-3">
+          <div>
+            <a href="/contact/" class="d-block text-right">Contact</a>
+            <a href="/terms/" class="d-block text-right">Terms of service</a>
+            <a href="/privacy/" class="d-block text-right">Privacy policy</a>
+          </div>
         </div>
       </div>
     </div>
@@ -223,6 +274,35 @@
     // Animations initialization
     new WOW().init();
 
+  </script>
+
+  <script>
+    $('ul.nav li.dropdown').hover(function() {
+      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(500);
+    }, function() {
+      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(500);
+    });
+  </script>
+
+  <script>
+    $productThumbnail = $('.product-thumbnail');
+
+    $productThumbnail.on("click", function() {
+      $productThumbnail.removeClass('active');
+      $(this).addClass('active');
+    });
+  </script>
+
+  <!--Lightbox-->
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" crossorigin="anonymous"></script>
+
+  <script>
+    $(document).on("click", '[data-toggle="lightbox"]', function(event) {
+      event.preventDefault();
+      $(this).ekkoLightbox({
+        alwaysShowClose: true
+      });
+    });
   </script>
 
   <!-- Maintain scroll position -->
@@ -424,6 +504,7 @@
 
       }).render('#paypal-button-container');
   </script>
+
 </body>
 
 </html>

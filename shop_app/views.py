@@ -9,6 +9,7 @@ from datetime import timedelta
 import decimal
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.contrib.sessions.models import Session
 import json
 import re
 import requests
@@ -22,6 +23,10 @@ from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 
 
 def index(request):
+    if 'purchase_value' in request.session:
+        del request.session['purchase_value']
+        request.session.clear()
+        request.session.flush()
     request.session['carousel'] = "carousel"
     request.session['page'] = "home"
     carousel = ""
@@ -29,6 +34,7 @@ def index(request):
         carousel = Carousel.objects.get(default=True)
     carousel_items = CarouselItem.objects.filter(carousel=carousel).order_by('number')
     products = Product.objects.all().order_by('-created_at')
+    category = Category.objects.all().order_by('number')
     expired_carts = Cart.objects.filter(user=None)
     month = datetime.datetime.today() - timedelta(days=30)
     old = month.timestamp()
@@ -90,7 +96,7 @@ def index(request):
             "cart": cart,
             "page_object": page_object,
             "unread_messages": unread_messages,
-            "category": Category.objects.all(),
+            "category": category,
             "old": old,
         }
     elif 'cart_id' in request.session:
@@ -108,7 +114,7 @@ def index(request):
             "products": products,
             "cart": cart,
             "page_object": page_object,
-            "category": Category.objects.all(),
+            "category": category,
             "old": old,
         }
     else:
@@ -116,7 +122,7 @@ def index(request):
             "carousel_items": carousel_items,
             "products": products,
             "page_object": page_object,
-            "category": Category.objects.all(),
+            "category": category,
             "old": old,
         }
     return render(request, "index.html", context)
@@ -161,8 +167,10 @@ def product(request, id):
                 cart.quantity += cart_product.quantity
             cart.save()
         product_in_cart = cart.products.filter(product=product, cart=cart)
+        available_quantity = 0
         if product_in_cart:
             product_in_cart = cart.products.get(product=product, cart=cart)
+            available_quantity = (product.quantity - product_in_cart.quantity)
         context = {
             "user": user,
             "product": product,
@@ -171,6 +179,7 @@ def product(request, id):
             "unread_messages": unread_messages,
             "related_products": related_products,
             "quantity": quantity,
+            "available_quantity": available_quantity,
             "old": old,
             "best_sellers": best_sellers,
             "images": images,
@@ -186,14 +195,17 @@ def product(request, id):
                 cart.quantity += cart_product.quantity
             cart.save()
         product_in_cart = cart.products.filter(product=product, cart=cart)
+        available_quantity = 0
         if product_in_cart:
             product_in_cart = cart.products.get(product=product, cart=cart)
+            available_quantity = (product.quantity - product_in_cart.quantity)
         context = {
             "product": product,
             "cart": cart,
             "product_in_cart": product_in_cart,
             "related_products": related_products,
             "quantity": quantity,
+            "available_quantity": available_quantity,
             "old": old,
             "best_sellers": best_sellers,
             "images": images,
@@ -401,14 +413,40 @@ def checkout(request):
     return render(request, "checkout.html", context)
 
 
-def thank_you(request):
+def thank_you(request, order_id):
     if 'page' in request.session:
         del request.session['page']
     if 'carousel' in request.session:
         del request.session['carousel']
-    request.session.clear()
-    request.session.flush()
-    return render(request, "thankyou.html")
+    if 'continue' in request.session:
+        del request.session['continue']
+    if 'first_name' in request.session:
+        del request.session['first_name']
+    if 'last_name' in request.session:
+        del request.session['last_name']
+    if 'email' in request.session:
+        del request.session['email']
+    if 'address' in request.session:
+        del request.session['address']
+    if 'address_2' in request.session:
+        del request.session['address_2']
+    if 'city' in request.session:
+        del request.session['city']
+    if 'country' in request.session:
+        del request.session['country']
+    if 'state' in request.session:
+        del request.session['state']
+    if 'zipcode' in request.session:
+        del request.session['zipcode']
+    if 'shipping_rate' in request.session:
+        del request.session['shipping_rate']
+    if 'shipping_method' in request.session:
+        del request.session['shipping_method']
+    order = Order.objects.get(order_id=order_id)
+    context = {
+        "order_id": order.order_id,
+    }
+    return render(request, "thankyou.html", context)
 
 
 def contact(request):
@@ -416,7 +454,6 @@ def contact(request):
         del request.session['page']
     if 'carousel' in request.session:
         del request.session['carousel']
-    request.session['page'] = "contact"
     if 'user_id' in request.session:
         user = User.objects.get(id=request.session['user_id'])
         cart = Cart.objects.get(user=user)
@@ -442,6 +479,70 @@ def contact(request):
     else:
         context = {}
     return render(request, "contact.html", context)
+
+
+def terms(request):
+    if 'page' in request.session:
+        del request.session['page']
+    if 'carousel' in request.session:
+        del request.session['carousel']
+    if 'user_id' in request.session:
+        user = User.objects.get(id=request.session['user_id'])
+        cart = Cart.objects.get(user=user)
+        if cart.products.all():
+            cart.quantity = 0
+            for cart_product in cart.products.all():
+                cart.quantity += cart_product.quantity
+            cart.save()
+        context = {
+            "user": user,
+            "cart": cart,
+        }
+    elif 'cart_id' in request.session:
+        cart = Cart.objects.get(id=request.session['cart_id'])
+        if cart.products.all():
+            cart.quantity = 0
+            for cart_product in cart.products.all():
+                cart.quantity += cart_product.quantity
+            cart.save()
+        context = {
+            "cart": cart,
+        }
+    else:
+        context = {}
+    return render(request, "terms.html", context)
+
+
+def privacy(request):
+    if 'page' in request.session:
+        del request.session['page']
+    if 'carousel' in request.session:
+        del request.session['carousel']
+    if 'user_id' in request.session:
+        user = User.objects.get(id=request.session['user_id'])
+        cart = Cart.objects.get(user=user)
+        if cart.products.all():
+            cart.quantity = 0
+            for cart_product in cart.products.all():
+                cart.quantity += cart_product.quantity
+            cart.save()
+        context = {
+            "user": user,
+            "cart": cart,
+        }
+    elif 'cart_id' in request.session:
+        cart = Cart.objects.get(id=request.session['cart_id'])
+        if cart.products.all():
+            cart.quantity = 0
+            for cart_product in cart.products.all():
+                cart.quantity += cart_product.quantity
+            cart.save()
+        context = {
+            "cart": cart,
+        }
+    else:
+        context = {}
+    return render(request, "privacy.html", context)
 
 
 def filter(request, category):
@@ -517,18 +618,20 @@ def add_to_cart(request, id):
         request.session['cart_id'] = session_cart.id
         cart = Cart.objects.get(id=request.session['cart_id'])
     product = Product.objects.get(id=id)
-    cart_product = CartProduct.objects.create(
-        product=product, quantity=request.POST['quantity'])
-    cart.products.add(cart_product)
+    if not cart.products.filter(product=product):
+        cart_product = CartProduct.objects.create(
+            product=product)
+        cart.products.add(cart_product)
     product_in_cart = CartProduct.objects.get(product=product, cart=cart)
-    cart.quantity += product_in_cart.quantity
+    product_in_cart.quantity += int(request.POST['quantity'])
+    cart.quantity += int(request.POST['quantity'])
     cart.save()
     price = product.price
     if product.discount_price:
         price = product.discount_price
-    product_in_cart.total += (price * decimal.Decimal(product_in_cart.quantity))
+    product_in_cart.total += (price * decimal.Decimal(request.POST['quantity']))
     product_in_cart.save()
-    cart.total += (price * decimal.Decimal(product_in_cart.quantity))
+    cart.total += (price * decimal.Decimal(request.POST['quantity']))
     cart.save()
     messages.info(request, '"' + product.name + '"' + " added to cart.")
     return redirect('/cart')
@@ -850,6 +953,7 @@ def create_order(request, id):
             subtotal = round(cart.total - discount, 2)
             tax = round(subtotal * tax_rate, 2)
             total = round(subtotal + tax + shipping_cost - shipping_discount, 2)
+        request.session['purchase_value'] = float(total)
         items = []
         for cart_product in cart.products.all():
             price = cart_product.product.price
@@ -955,11 +1059,13 @@ def capture_order(request, order_id, id):
 
 
 def order_placed(request):
+    order_id = ""
     if 'cart_id' in request.session:
         cart = Cart.objects.get(id=request.session['cart_id'])
         new_order = Order.objects.create(order_id=cart.order_id)
         order = Order.objects.get(order_id=cart.order_id)
         order.email = request.session['email']
+        order_id = cart.order_id
         if cart.products.all():
             for cart_product in cart.products.all():
                 db_product = Product.objects.get(id=cart_product.product.id)
@@ -983,6 +1089,7 @@ def order_placed(request):
         new_order = Order.objects.create(order_id=cart.order_id)
         order = Order.objects.get(order_id=cart.order_id)
         order.email = request.session['email']
+        order_id = cart.order_id
         if cart.products.all():
             for cart_product in cart.products.all():
                 db_product = Product.objects.get(id=cart_product.product.id)
@@ -993,6 +1100,13 @@ def order_placed(request):
                 cart.save()
                 order.products.add(cart_product)
                 order.save()
+        send_mail(
+                'Order: ' + order.order_id,
+                'Thank you for shopping at dekageshop.com. If you like your items, consider leaving us a review using the order ID.',
+                settings.EMAIL_HOST_USER,
+                [order.email],
+                fail_silently=False,
+            )
     if 'email' in request.session:
         del request.session['email']
-    return redirect('/thankyou')
+    return redirect('/thankyou/' + order_id)

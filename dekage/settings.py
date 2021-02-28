@@ -34,6 +34,9 @@ EMAIL_HOST_PASSWORD = 'dekageadmin69'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

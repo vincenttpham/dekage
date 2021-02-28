@@ -7,6 +7,7 @@ import datetime
 
 
 class Category(models.Model):
+    number = models.IntegerField(default=0)
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -58,7 +59,7 @@ class Review(models.Model):
 
 class CartProduct(models.Model):
     total = models.DecimalField(max_digits=15, decimal_places=2, default=0.0)
-    quantity = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

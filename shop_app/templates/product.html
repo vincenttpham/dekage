@@ -8,14 +8,15 @@
     <!--Grid row-->
     <div class="row wow fadeIn">
 
+      <div class="col-xxl-1"></div>
       <!--Grid column-->
-      <div class="p-carousel-indicators col-lg-2 col-md-3 col-sm-12 col-12">
+      <div class="col-xxl-1 col-lg-2 col-md-3 col-12">
         <div class="container">
-          <div class="row justify-content-start">
+          <div class="row">
             {% for image in images %}
-            <div class="col-md-6 col-sm-3 col-3 m-1 d-flex">
-              <button class="" data-target="#product-carousel" data-slide-to="{{ forloop.counter0 }}" style="background-image: url('{{ image.img.url }}'); background-repeat: no-repeat; background-size: contain; background-position: center; width: 100%; height: 0; padding-bottom: 100%;">
-              </button>
+            <div class="col-xxl-12 col-md-7 col-3 d-flex justify-content-center">
+              <div class="product-thumbnail my-1 {% if forloop.first %}active{% endif %}" data-target="#product-carousel" data-slide-to="{{ forloop.counter0 }}" style="background-image: url('{{ image.img.url }}'); background-repeat: no-repeat; background-size: contain; background-position: center; width: 100%; height: 0; padding-bottom: 100%;">
+              </div>
             </div>
             {% endfor %}
           </div>
@@ -24,7 +25,7 @@
       <!--Grid column-->
 
       <!--Grid column-->
-      <div class="col-lg-6 col-md-5 col-sm-12 col-12">
+      <div class="col-lg-6 col-md-5 col-12">
 
         <!--Carousel Wrapper-->
         <div id="product-carousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval="0">
@@ -39,17 +40,11 @@
             {% else %}
             <div class="carousel-item">
             {% endif %}
-              <a class="lightbox" href="#{{ image.img.url }}">
+              <a href="{{ image.img.url }}" data-toggle="lightbox" data-gallery="gallery">
                 <div class="product-image">
-                  <img src="{{ image.img.url }}">
+                  <img src="{{ image.img.url }}" class="p-4">
                 </div>
               </a>
-            </div>
-            <div class="lightbox-target" id="{{ image.img.url }}">
-              <a href="#">
-                <img src="{{ image.img.url }}">
-              </a>
-              <a href="#" class="lightbox-close"></a>
             </div>
             {% endfor %}
             <!--/First slide-->
@@ -74,23 +69,25 @@
         <div class="p-0">
 
           <div class="mb-3">
-            <a href="">
-              <span class="badge purple mr-1">{{ product.category }}</span>
+            <a href="" class="lead">
+              <span class="badge pink lighten-3 mr-1 fredokaOne">{{ product.category }}</span>
             </a>
             {% if product.discount_price %}
-            <a href="">
-              <span class="badge danger-color mr-1">Sale</span>
+            <a href="" class="lead">
+              <span class="badge green lighten-3 mr-1 fredokaOne">Sale</span>
             </a>
             {% endif %}
             {% if product.created_at.timestamp > old %}
-            <a href="">
-              <span class="badge primary-color mr-1">New</span>
+            <a href="" class="lead">
+              <span class="badge blue lighten-3 mr-1 fredokaOne">New</span>
             </a>
             {% endif %}
+            {% if product.sales >= 10 %}
             {% if product in best_sellers %}
-            <a href="">
-              <span class="badge orange mr-1">Bestseller</span>
+            <a href="" class="lead">
+              <span class="badge yellow darken-1 mr-1 fredokaOne">Bestseller</span>
             </a>
+            {% endif %}
             {% endif %}
           </div>
 
@@ -132,42 +129,37 @@
           <p class="text-danger">Only {{ product.quantity }} left in stock - order soon.</p>
           {% endif %}
 
-          {% if product_in_cart %}
-          <form action="/cart/product/{{ product.id }}/change/" method="POST">
-            {% csrf_token %}
-            <!-- Default input -->
-            <select name="quantity">
-              {% for qty in quantity %}
-              {% if qty <= product.quantity %}
-              {% if qty == product_in_cart.quantity %}
-              <option value="{{ qty }}" selected>Qty: {{ qty }}</option>
-              {% else %}
-              <option value="{{ qty }}">Qty: {{ qty }}</option>
-              {% endif %}
-              {% endif %}
-              {% endfor %}
-            </select>
-            <button class="btn btn-info btn-md my-0 p" type="submit">Change quantity
-              <i class="fas fa-exchange-alt ml-1"></i>
-            </button>
-          </form>
-          {% else %}
           <form action="/product/{{ product.id }}/add/" method="POST" class="d-flex justify-content-left">
             {% csrf_token %}
             <!-- Default input -->
-            <select name="quantity">
+            <select class="custom-select w-auto" name="quantity">
+              {% if available_quantity < 1 %}
+              <option selected disabled>Qty: 0</option>
+              {% else %}
               {% for qty in quantity %}
+              {% if product_in_cart %}
+              {% if qty <= available_quantity %}
+              <option value="{{ qty }}">Qty: {{ qty }}</option>
+              {% endif %}
+              {% else %}
               {% if qty <= product.quantity %}
               <option value="{{ qty }}">Qty: {{ qty }}</option>
               {% endif %}
+              {% endif %}
               {% endfor %}
+              {% endif %}
             </select>
+            {% if available_quantity < 1 %}
+            <button class="btn btn-primary btn-md my-0 p" type="submit" disabled>Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i>
+            </button>
+            {% else %}
             <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
               <i class="fas fa-shopping-cart ml-1"></i>
             </button>
+            {% endif %}
 
           </form>
-          {% endif %}
           {% endif %}
 
         </div>
@@ -187,7 +179,7 @@
       <!--Grid column-->
       <div class="col-md-6 text-center">
 
-        <h4 class="my-4 h4">Similar products</h4>
+        <h4 class="my-4 h4 fredokaOne">Similar products</h4>
 
       </div>
       <!--Grid column-->
@@ -196,11 +188,11 @@
     <!--Grid row-->
 
     <!--Grid row-->
-    <div class="row wow fadeIn mt-3 d-flex justify-content-around">
+    <div class="row wow fadeIn mt-3">
 
-      {% for item in related_products|slice:"3" %}
+      {% for item in related_products|slice:"6" %}
       <!--Grid column-->
-      <div class="col-lg-3 col-md-4 mb-4 d-flex align-items-stretch justify-content-center">
+      <div class="col-xxl-2 col-lg-3 col-md-4 mb-4 d-flex align-items-stretch justify-content-center">
 
         <!--Card-->
         <div class="card w-100">
@@ -211,7 +203,7 @@
             <div class="product-image">
               {% for image in item.images.all %}
               {% if image.default %}
-              <img src="{{ image.img.url }}" class="" alt="">
+              <img src="{{ image.img.url }}" class="p-4" alt="">
               {% endif %}
               {% endfor %}
               <a href="/product/{{ item.id }}/">
@@ -226,7 +218,7 @@
             <div class="product-image">
               {% for image in item.images.all %}
               {% if image.default %}
-              <img src="{{ image.img.url }}" class="" alt="">
+              <img src="{{ image.img.url }}" class="p-4" alt="">
               {% endif %}
               {% endfor %}
               <a href="/product/{{ item.id }}/">
@@ -238,9 +230,8 @@
           <!--Card image-->
 
           <!--Card content-->
-          <div class="card-body text-center">
+          <div class="card-body text-left">
             <!--Category & Title-->
-            <h5 class="grey-text">{{ item.category.name }}</h5>
             <h5>
               <a href="/product/{{ item.id }}/" class="dark-grey-text d-block text-truncate">
                 {{ item.name }}
@@ -279,7 +270,7 @@
       <!--Grid column-->
       <div class="col-md-6 text-center">
 
-        <h4 class="my-4 h4">Customer reviews</h4>
+        <h4 class="my-4 h4 fredokaOne">Customer reviews</h4>
 
       </div>
       <!--Grid column-->
@@ -406,13 +397,9 @@
         {% endif %}
 
         {% if product.reviews.all.count < 1 %}
-        <div class="card">
-          <ul class="list-group z-depth-1">
-            <li class="list-group-item">
-              <h5>There are no customer reviews for this product yet.</h5>
-            </li>
-          </ul>
-        </div>
+        <h5 class="text-muted text-center mb-5">
+          There are no customer reviews for this product yet.
+        </h5>
         {% else %}
         <h5 class="mb-4">
           {{ product.reviews.all.count }}
@@ -434,7 +421,7 @@
 
         <form action="/review/{{ product.id }}/sort/" method="POST" class="mb-4">
           {% csrf_token %}
-          <select name="sort_reviews_by" onchange="pagePosition();this.form.submit();">
+          <select class="custom-select w-auto" name="sort_reviews_by" onchange="pagePosition();this.form.submit();">
             {% if not request.session.sort_reviews_by %}
             <option value="newest" selected disabled>Most recent</option>
             {% else %}
@@ -449,40 +436,38 @@
         </form>
 
         <!--Reviews-->
-        <div class="card">
-          <ul class="list-group z-depth-1">
-            {% for review in page_object %}
-            <li class="list-group-item">
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <h6 class="my-0">{{ review.username }}</h6>
-                    {% if review.updated %}
-                    <small>Updated on {{ review.updated_at|date }}</small>
+        <ul class="list-group">
+          {% for review in page_object %}
+          <li class="list-group-item">
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <h6 class="my-0">{{ review.username }}</h6>
+                  {% if review.updated %}
+                  <small>Updated on {{ review.updated_at|date }}</small>
+                  {% else %}
+                  <small>{{ review.created_at|date }}</small>
+                  {% endif %}
+                  <div class="my-2 d-flex">
+                    {% for i in '12345'|make_list %}
+                    {% if review.rating >= forloop.counter %}
+                    <i class="fas fa-star"></i>
                     {% else %}
-                    <small>{{ review.created_at|date }}</small>
+                    <i class="far fa-star"></i>
                     {% endif %}
-                    <div class="my-2 d-flex">
-                      {% for i in '12345'|make_list %}
-                      {% if review.rating >= forloop.counter %}
-                      <i class="fas fa-star"></i>
-                      {% else %}
-                      <i class="far fa-star"></i>
-                      {% endif %}
-                      {% endfor %}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <h6>{{ review.body }}</h6>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+              <div class="row">
+                <div class="col">
+                  <h6>{{ review.body }}</h6>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
         <!--/Reviews-->
         {% endif %}
 
@@ -549,11 +534,11 @@
 
       <!--Grid column-->
       <div class="col-12 order-1 col-md-5 order-md-12 col-lg-4 mb-4">
-        <ul class="list-group mb-3 z-depth-1">
-          <li class="list-group-item">
-            <h6>Enter your order id to submit a review!</h6>
-          </li>
-        </ul>
+
+        <!--Heading-->
+        <h6 class="text-muted mb-3">
+          Enter your order id to submit a review!
+        </h6>
 
         {% if messages %}
         {% if request.session.existing_review == product.id %}
@@ -589,7 +574,7 @@
         </div>
         {% endif %}
 
-        <form action="/review/{{ product.id }}/" method="POST" class="card p-2 mb-3">
+        <form action="/review/{{ product.id }}/" method="POST" class="card p-2 mb-5">
           {% csrf_token %}
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Order ID" aria-label="Order ID"

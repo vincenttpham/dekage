@@ -19,7 +19,7 @@ urlpatterns = [
     path('checkout/order/<int:id>/', views.create_order),
     path('checkout/order/<order_id>/capture/<int:id>/', views.capture_order),
     path('checkout/order/placed/', views.order_placed),
-    path('thankyou/', views.thank_you),
+    path('thankyou/<order_id>/', views.thank_you),
     path('review/<int:id>/', views.review),
     path('review/<int:id>/submit/', views.submit_review),
     path('review/<int:id>/update/', views.update_review),
@@ -27,4 +27,6 @@ urlpatterns = [
     path('review/<int:id>/sort/', views.sort_reviews),
     path('contact/', views.contact),
     path('contact/submit/', views.submit_contact),
+    path('terms/', views.terms),
+    path('privacy/', views.privacy),
 ]

@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!--Facebook Pixel Purchase Event-->
+{% if 'purchase_value' not in request.session %}
+<input id="purchase-value" value="0" hidden>
+{% else %}
+<input id="purchase-value" value="{{ request.session.purchase_value }}" hidden>
+{% endif %}
+<script>
+  const purchase_value = document.getElementById('purchase-value').value
+  fbq('track', 'Purchase', {currency: "USD", value: purchase_value});
+</script>
+<!--End Facebook Pixel Purchase Event-->
 <!--Main layout-->
 <main class="mt-5 pt-4">
   <div class="container wow fadeIn">
@@ -13,7 +24,8 @@
 
       <!--Grid column-->
       <div class="col-md-12 col-lg-12 mb-5">
-        <h5 class="text-center">Your order was completed successfully.</h5>
+        <h5 class="text-center">Your payment of ${{ request.session.purchase_value }} has been processed successfully. A receipt with your order details will be emailed to you.</h5>
+        <h6 class="text-center my-4">Order ID: {{ order_id }}</h6>
       </div>
       <!--Grid column-->
 

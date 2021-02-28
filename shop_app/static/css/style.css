@@ -24,46 +24,31 @@ body,
 
 
 
+/* Bubbly font */
+.fredokaOne {
+  font-family: 'Fredoka One', cursive;
+}
 
 /* 5 STARS */
 .oneStar {
   color: #44370f;
   cursor: pointer;
 }
-
 .twoStars {
   color: #96781e;
   cursor: pointer;
 }
-
 .threeStars {
   color: #e2b52e;
   cursor: pointer;
 }
-
 .fourStars {
   color: #f1ba12;
   cursor: pointer;
 }
-
 .fiveStars {
   color: #f3cb06;
   cursor: pointer;
-}
-
-/* PRODUCT CAROUSEL */
-.p-carousel-indicators button {
-  background-color: white;
-  opacity: .5;
-  border-style: none;
-  cursor: pointer;
-}
-.p-carousel-indicators button:hover {
-  opacity: 1;
-}
-.p-carousel-indicators button:active {
-  opacity: 1;
-  border-style: solid;
 }
 
 /* PRODUCT IMAGE SQUARE */
@@ -79,14 +64,10 @@ body,
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
+  filter: drop-shadow(0 0 2px #a0a0a0);
+  -webkit-filter: drop-shadow(0 0 2px #a0a0a0);
 }
 .view .product-image img {
-  position: absolute;
-  max-width: 100%;
-  max-height: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
   -webkit-transition: transform .3s ease-in-out;
   -moz-transition: transform .3s ease-in-out;
   -o-transition: transform .3s ease-in-out;
@@ -96,135 +77,216 @@ body,
   transform: translateX(-50%) translateY(-50%) scale(1.5);
 }
 
-/* LIGHTBOX */
-
-/*Eliminates padding, centers the thumbnail */
-
-/*
-body, html {
-  padding: 0;
-  margin: 0;
-  text-align: center;
+/* PRODUCT CAROUSEL */
+.product-thumbnail {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: .5;
+  transition: opacity 0.6s ease;
 }
-*/
-
-/* Styles the thumbnail */
-
-/*
-a.lightbox img {
-  height: 150px;
-  border: 3px solid white;
-  box-shadow: 0px 0px 8px rgba(0,0,0,.3);
-  margin: 94px 20px 20px 20px;
-}
-*/
-
-/* Styles the lightbox, removes it from sight and adds the fade-in transition */
-
-.lightbox-target {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(0,0,0,.7);
-  width: 100%;
-  opacity: 0;
-  -webkit-transition: opacity .5s ease-in-out;
-  -moz-transition: opacity .5s ease-in-out;
-  -o-transition: opacity .5s ease-in-out;
-  transition: opacity .5s ease-in-out;
-  overflow: hidden;
-  z-index: 1031;
-}
-
-/* Styles the lightbox image, centers it vertically and horizontally, adds the zoom-in transition and makes it responsive using a combination of margin and absolute positioning */
-
-.lightbox-target img {
-  margin: auto;
-  position: absolute;
-  top: 0;
-  left:0;
-  right:0;
-  bottom: 0;
-  max-height: 0%;
-  max-width: 0%;
-  /*
-  border: 3px solid white;
-  box-shadow: 0px 0px 8px rgba(0,0,0,.3);
-  box-sizing: border-box;
-  */
-  -webkit-transition: .5s ease-in-out;
-  -moz-transition: .5s ease-in-out;
-  -o-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-}
-
-/* Styles the close link, adds the slide down transition */
-
-a.lightbox-close {
-  display: block;
-  width:50px;
-  height:50px;
-  box-sizing: border-box;
-  background: white;
-  color: black;
-  text-decoration: none;
-  position: absolute;
-  top: -80px;
-  right: 0;
-  -webkit-transition: .5s ease-in-out;
-  -moz-transition: .5s ease-in-out;
-  -o-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-}
-
-/* Provides part of the "X" to eliminate an image from the close link */
-
-a.lightbox-close:before {
-  content: "";
-  display: block;
-  height: 30px;
-  width: 1px;
-  background: black;
-  position: absolute;
-  left: 26px;
-  top:10px;
-  -webkit-transform:rotate(45deg);
-  -moz-transform:rotate(45deg);
-  -o-transform:rotate(45deg);
-  transform:rotate(45deg);
-}
-
-/* Provides part of the "X" to eliminate an image from the close link */
-
-a.lightbox-close:after {
-  content: "";
-  display: block;
-  height: 30px;
-  width: 1px;
-  background: black;
-  position: absolute;
-  left: 26px;
-  top:10px;
-  -webkit-transform:rotate(-45deg);
-  -moz-transform:rotate(-45deg);
-  -o-transform:rotate(-45deg);
-  transform:rotate(-45deg);
-}
-
-/* Uses the :target pseudo-class to perform the animations upon clicking the .lightbox-target anchor */
-
-.lightbox-target:target {
+.product-thumbnail:hover {
   opacity: 1;
-  top: 0;
-  bottom: 0;
+  transition: 0s;
+}
+.product-thumbnail.active {
+  opacity: 1;
+  border: 2px solid #6c757d;
+  border-radius: 10%;
+}
+@media (max-width: 776px) {
+  #product-carousel.carousel {
+    height: 100%;
+  }
 }
 
-.lightbox-target:target img {
-  max-height: 100%;
-  max-width: 100%;
+/* LIGHTBOX */
+.modal .modal-header {
+  border: none;
+}
+.modal .modal-content {
+  box-shadow: none;
+  background: none;
+}
+.modal div {
+  padding: 0;
 }
 
-.lightbox-target:target a.lightbox-close {
-  top: 0px;
+/* WIDE SCREEN */
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1440px;
+  }
+  .container-narrow {
+    max-width: 1140px;
+  }
+  .col-xxl {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+  }
+  .col-xxl-auto {
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+  }
+  .col-xxl-1 {
+    -ms-flex: 0 0 8.333333%;
+    flex: 0 0 8.333333%;
+    max-width: 8.333333%;
+  }
+  .col-xxl-2 {
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+  .col-xxl-3 {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-xxl-4 {
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+  .col-xxl-5 {
+    -ms-flex: 0 0 41.666667%;
+    flex: 0 0 41.666667%;
+    max-width: 41.666667%;
+  }
+  .col-xxl-6 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .col-xxl-7 {
+    -ms-flex: 0 0 58.333333%;
+    flex: 0 0 58.333333%;
+    max-width: 58.333333%;
+  }
+  .col-xxl-8 {
+    -ms-flex: 0 0 66.666667%;
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+  }
+  .col-xxl-9 {
+    -ms-flex: 0 0 75%;
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+  .col-xxl-10 {
+    -ms-flex: 0 0 83.333333%;
+    flex: 0 0 83.333333%;
+    max-width: 83.333333%;
+  }
+  .col-xxl-11 {
+    -ms-flex: 0 0 91.666667%;
+    flex: 0 0 91.666667%;
+    max-width: 91.666667%;
+  }
+  .col-xxl-12 {
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .order-xxl-first {
+    -ms-flex-order: -1;
+    order: -1;
+  }
+  .order-xxl-last {
+    -ms-flex-order: 13;
+    order: 13;
+  }
+  .order-xxl-0 {
+    -ms-flex-order: 0;
+    order: 0;
+  }
+  .order-xxl-1 {
+    -ms-flex-order: 1;
+    order: 1;
+  }
+  .order-xxl-2 {
+    -ms-flex-order: 2;
+    order: 2;
+  }
+  .order-xxl-3 {
+    -ms-flex-order: 3;
+    order: 3;
+  }
+  .order-xxl-4 {
+    -ms-flex-order: 4;
+    order: 4;
+  }
+  .order-xxl-5 {
+    -ms-flex-order: 5;
+    order: 5;
+  }
+  .order-xxl-6 {
+    -ms-flex-order: 6;
+    order: 6;
+  }
+  .order-xxl-7 {
+    -ms-flex-order: 7;
+    order: 7;
+  }
+  .order-xxl-8 {
+    -ms-flex-order: 8;
+    order: 8;
+  }
+  .order-xxl-9 {
+    -ms-flex-order: 9;
+    order: 9;
+  }
+  .order-xxl-10 {
+    -ms-flex-order: 10;
+    order: 10;
+  }
+  .order-xxl-11 {
+    -ms-flex-order: 11;
+    order: 11;
+  }
+  .order-xxl-12 {
+    -ms-flex-order: 12;
+    order: 12;
+  }
+  .offset-xxl-0 {
+    margin-left: 0;
+  }
+  .offset-xxl-1 {
+    margin-left: 8.333333%;
+  }
+  .offset-xxl-2 {
+    margin-left: 16.666667%;
+  }
+  .offset-xxl-3 {
+    margin-left: 25%;
+  }
+  .offset-xxl-4 {
+    margin-left: 33.333333%;
+  }
+  .offset-xxl-5 {
+    margin-left: 41.666667%;
+  }
+  .offset-xxl-6 {
+    margin-left: 50%;
+  }
+  .offset-xxl-7 {
+    margin-left: 58.333333%;
+  }
+  .offset-xxl-8 {
+    margin-left: 66.666667%;
+  }
+  .offset-xxl-9 {
+    margin-left: 75%;
+  }
+  .offset-xxl-10 {
+    margin-left: 83.333333%;
+  }
+  .offset-xxl-11 {
+    margin-left: 91.666667%;
+  }
 }

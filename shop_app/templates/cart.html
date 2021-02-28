@@ -3,103 +3,95 @@
 {% block content %}
 <!--Main layout-->
 <main class="mt-5 pt-4">
-  <div class="container wow fadeIn">
+  <div class="container container-narrow wow fadeIn">
 
     <!-- Heading -->
-    <h2 class="my-5 h2 text-center">Cart</h2>
+    <h2 class="my-5 h2 text-center fredokaOne">Cart</h2>
 
     <!--Grid row-->
-    <div class="row">
+    <div class="row mb-5">
 
       <!--Grid column-->
       <div class="col-md-7 col-lg-8 mb-4">
 
-        <!--Card-->
-        <div class="card">
-
-          <!--Card content-->
-          <ul class="list-group z-depth-1">
-            {% if not cart_products or not cart %}
-            <li class="list-group-item">
-              <h4 class="p-2 text-center">
-                Your cart is empty 😢.
-              </h4>
-              <h6 class="text-center">
-                Fill it up with stickers
-              </h6>
-              <h5 class="p-3 text-center">
-                <a href="/"><u>Continue shopping</u></a>
-              </h5>
-            </li>
-            {% else %}
-            {% for cart_product in cart_products %}
-            <li class="list-group-item">
-              <div class="container">
-                <div class="row align-items-center">
-                  <div class="col-7 col-lg-4 my-2">
-                    <h6 class="my-0">{{ cart_product.product.name }}</h6>
-                  </div>
-                  <div class="col-5 col-lg-2 my-2 d-flex justify-content-center">
-                    <a href="/product/{{ cart_product.product.id }}/" class="product-image">
-                      {% for image in cart_product.product.images.all %}
-                      {% if image.default %}
-                      <img src="{{ image.img.url }}" class="img-fluid" alt="">
+        {% if not cart_products or not cart %}
+        <h4 class="p-2 text-center">
+          Your cart is empty 😢.
+        </h4>
+        <h6 class="text-center">
+          Fill it up with stickers
+        </h6>
+        <h5 class="p-3 text-center">
+          <a href="/">Continue shopping</a>
+        </h5>
+        {% else %}
+        <!--Cart items-->
+        <ul class="list-group z-depth-1">
+          {% for cart_product in cart_products %}
+          <li class="list-group-item">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-7 col-lg-4 my-2">
+                  <h6 class="my-0">{{ cart_product.product.name }}</h6>
+                </div>
+                <div class="col-5 col-lg-2 my-2 d-flex justify-content-center">
+                  <a href="/product/{{ cart_product.product.id }}/" class="product-image">
+                    {% for image in cart_product.product.images.all %}
+                    {% if image.default %}
+                    <img src="{{ image.img.url }}" class="img-fluid" alt="">
+                    {% endif %}
+                    {% endfor %}
+                  </a>
+                </div>
+                <div class="col-12 col-lg-2 my-2 text-center">
+                  {% if cart_product.product.discount_price %}
+                  <span>
+                    ${{ cart_product.product.discount_price }}
+                    <span class="text-danger">
+                      <small>
+                        <del>
+                          ${{ cart_product.product.price }}
+                        </del>
+                      </small>
+                    </span>
+                  </span>
+                  {% else %}
+                  <span>
+                    ${{ cart_product.product.price }}
+                  </span>
+                  {% endif %}
+                </div>
+                <div class="col-6 col-lg-2 my-2 text-center">
+                  <form action="/cart/product/{{ cart_product.product.id }}/change/" method="POST">
+                    {% csrf_token %}
+                    <select name="quantity" onchange="pagePosition();this.form.submit();">
+                      {% for qty in quantity %}
+                      {% if qty <= cart_product.product.quantity %}
+                      {% if qty == cart_product.quantity %}
+                      <option value="{{ qty }}" selected disabled>Qty: {{ qty }}</option>
+                      {% else %}
+                      <option value="{{ qty }}">Qty: {{ qty }}</option>
+                      {% endif %}
                       {% endif %}
                       {% endfor %}
-                    </a>
-                  </div>
-                  <div class="col-12 col-lg-2 my-2 text-center">
-                    {% if cart_product.product.discount_price %}
-                    <span>
-                      ${{ cart_product.product.discount_price }}
-                      <span class="text-danger">
-                        <small>
-                          <del>
-                            ${{ cart_product.product.price }}
-                          </del>
-                        </small>
-                      </span>
+                    </select>
+                  </form>
+                </div>
+                <div class="col-6 col-lg-2 my-2 text-center">
+                  <a href="/cart/product/{{ cart_product.product.id }}/remove/" class="btn btn-light btn-sm px-3" onclick="pagePosition();">
+                    <span class="d-block text-truncate">
+                      Remove
+                      <i class="fas fa-trash text-muted"></i>
                     </span>
-                    {% else %}
-                    <span>
-                      ${{ cart_product.product.price }}
-                    </span>
-                    {% endif %}
-                  </div>
-                  <div class="col-6 col-lg-2 my-2 text-center">
-                    <form action="/cart/product/{{ cart_product.product.id }}/change/" method="POST">
-                      {% csrf_token %}
-                      <select name="quantity" onchange="pagePosition();this.form.submit();">
-                        {% for qty in quantity %}
-                        {% if qty <= cart_product.product.quantity %}
-                        {% if qty == cart_product.quantity %}
-                        <option value="{{ qty }}" selected disabled>Qty: {{ qty }}</option>
-                        {% else %}
-                        <option value="{{ qty }}">Qty: {{ qty }}</option>
-                        {% endif %}
-                        {% endif %}
-                        {% endfor %}
-                      </select>
-                    </form>
-                  </div>
-                  <div class="col-6 col-lg-2 my-2 text-center">
-                    <a href="/cart/product/{{ cart_product.product.id }}/remove/" class="btn btn-light btn-sm px-3" onclick="pagePosition();">
-                      <span class="d-block text-truncate">
-                        Remove
-                        <i class="fas fa-trash text-muted"></i>
-                      </span>
-                    </a>
-                  </div>
+                  </a>
                 </div>
               </div>
-            </li>
-            {% endfor %}
-            {% endif %}
-          </ul>
-          <!--/.Card content-->
-
-        </div>
-        <!--/.Card-->
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <!--/.Cart items-->
+        {% endif %}
 
       </div>
       <!--Grid column-->
