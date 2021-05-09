@@ -15,7 +15,7 @@ import re
 import requests
 import urllib.request
 import xml.etree.ElementTree as ET
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from shop_app.paypal import PayPalClient
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 
@@ -595,7 +595,7 @@ def submit_contact(request):
             send_mail(
                 request.POST['email'] + ' - ' + request.POST['first_name'] + request.POST['last_name'],
                 request.POST['message'],
-                request.POST['email'],
+                settings.EMAIL_HOST_USER,
                 [settings.EMAIL_HOST_USER],
                 fail_silently=False,
             )
